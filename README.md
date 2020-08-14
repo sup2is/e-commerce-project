@@ -1,4 +1,5 @@
 # e-commerce-project
+
 Spring Cloud로 작성하는 E-Commerce 플랫폼
 
 # 구현 목표
@@ -26,6 +27,12 @@ Spring Cloud로 작성하는 E-Commerce 플랫폼
 
 
 
+
+# Note.
+
+- zuul에서 api 분기를 /api, /auth로 나눌것
+  - /api는 인증(jwt token)이 있는 경우에만 접근 가능
+  - /auth는 jwt 토큰 발급 분기
 
 
 

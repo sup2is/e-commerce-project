@@ -1,4 +1,7 @@
 package me.sup2is.web;
 
-public class JsonResult {
+import java.util.HashMap;
+
+public class JsonResult extends HashMap<String, Object> {
+
 }

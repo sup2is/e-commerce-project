@@ -1,4 +1,4 @@
-package me.sup2is;
+package me.sup2is.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

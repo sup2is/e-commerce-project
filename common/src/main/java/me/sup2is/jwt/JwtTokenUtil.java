@@ -1,4 +1,4 @@
-package me.sup2is;
+package me.sup2is.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

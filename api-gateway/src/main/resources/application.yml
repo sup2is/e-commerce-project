@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: api-gateway
+
+server:
+  port: 8080
+
+zuul:
+  routes:
+    authentiaction-service:
+      path: /auth/**
+      url: http://
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+
+jwt:
+  secret: my-secret

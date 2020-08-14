@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
+
 @ToString
 @Getter
 @AllArgsConstructor
-public class MemberDto {
-
-    private final String memberId;
+public class AuthenticationRequestDto {
+    private final String username;
     private final String password;
-
 }

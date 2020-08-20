@@ -1,6 +1,9 @@
 spring:
   application:
     name: api-gateway
+  redis:
+    host: 192.168.0.11
+    port: 6379
 
 server:
   port: 8080

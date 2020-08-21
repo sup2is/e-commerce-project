@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -34,9 +35,9 @@ public class JwtAuthenticateFilter extends ZuulServletFilter {
             && SecurityContextHolder.getContext().getAuthentication() == null
             && jwtTokenUtil.validateToken(accessToken)){
 
-            Member member = authServiceClient.getMember(accessToken);
+            User user = authServiceClient.getMember(accessToken);
             UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(member, accessToken, member.getAuthorities());
+                new UsernamePasswordAuthenticationToken(user, accessToken, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
 

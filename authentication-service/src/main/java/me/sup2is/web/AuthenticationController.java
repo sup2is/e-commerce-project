@@ -15,7 +15,7 @@ public class AuthenticationController {
     private final JwtAuthenticationGenerator jwtAuthenticationGenerator;
     private final MemberService memberService;
 
-    @PostMapping("/auth")
+    @PostMapping("/token")
     public ResponseEntity<JsonResult<AuthenticationResponseDto>> generateJwtToken
             (@RequestBody AuthenticationRequestDto authenticationRequestDto) {
         UserDetails userDetails = memberService.loadUserByUsername(authenticationRequestDto.getUsername());

@@ -35,8 +35,10 @@ Spring Cloud로 작성하는 E-Commerce 플랫폼
 # Note.
 
 - zuul에서 api 분기를 /api, /auth로 나눌것
-  - /api는 인증(jwt token)이 있는 경우에만 접근 가능
+  - /api는 인증된 세션 & token이 유효한 경우에만 접근 가능, zuul filter에서 처리
+  - 실제 세션검사는 auth-service에서 feign client 사용할 것
   - /auth는 jwt 토큰 발급 분기
 
+- 모든 서버들은 redis 로 session clustering 되어야함
 
 

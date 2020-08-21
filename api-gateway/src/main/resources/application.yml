@@ -25,3 +25,9 @@ eureka:
 
 jwt:
   secret: my-secret
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: routes

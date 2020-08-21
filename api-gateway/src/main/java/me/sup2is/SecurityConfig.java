@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.stereotype.Component;
 
 @EnableWebSecurity
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
     private final JwtAuthenticateFilter jwtAuthenticateFilter;
 
     @Override
@@ -30,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .cors().disable();
 
+        http.addFilterBefore(exceptionHandlerFilter, SecurityContextPersistenceFilter.class);
         http.addFilterBefore(jwtAuthenticateFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -46,4 +49,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

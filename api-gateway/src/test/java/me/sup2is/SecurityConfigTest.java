@@ -61,6 +61,7 @@ class SecurityConfigTest {
     }
 
     @Test
+    @DisplayName("토큰이 없는 사람이 access했을 경우")
     public void access_invalid_user_empty_access_token() throws Exception{
         //given
 
@@ -69,7 +70,7 @@ class SecurityConfigTest {
         mockMvc.perform(get("/api/")
             .header(HttpHeaders.AUTHORIZATION, "Bearer "))
             .andDo(print())
-            .andExpect(status().is(404));
+            .andExpect(status().is(401));
 
     }
 

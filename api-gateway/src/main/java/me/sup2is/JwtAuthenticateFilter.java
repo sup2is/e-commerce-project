@@ -1,6 +1,5 @@
 package me.sup2is;
 
-import com.netflix.zuul.filters.ZuulServletFilter;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.jwt.JwtTokenUtil;
 import org.springframework.http.HttpHeaders;
@@ -9,26 +8,26 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RequiredArgsConstructor
 @Component
-public class JwtAuthenticateFilter extends ZuulServletFilter {
+public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthServiceClient authServiceClient;
     private static final String TOKEN_PREFIX = "Bearer ";
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = extractTokenFromHeader(((HttpServletRequest)servletRequest).getHeader(HttpHeaders.AUTHORIZATION));
+        String accessToken = extractTokenFromHeader((httpServletRequest).getHeader(HttpHeaders.AUTHORIZATION));
         String email = extractIdFromToken(accessToken);
 
         if(email != null
@@ -41,7 +40,7 @@ public class JwtAuthenticateFilter extends ZuulServletFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
 
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     private String extractIdFromToken(String token) {

@@ -25,6 +25,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,10 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@WebMvcTest(AuthenticationController.class)
-//@EnableAutoConfiguration(exclude = RedisAutoConfiguration.class)  // redisautoconfiguration 설정을 exclude해도 자꾸 에러가남 ..
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(AuthenticationController.class)
+@ContextConfiguration(classes = RedisTestConfig.class)
 class AuthenticationControllerTest {
 
     @Autowired

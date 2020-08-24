@@ -1,11 +1,14 @@
 package me.sup2is;
 
+import com.netflix.discovery.converters.Auto;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -16,6 +19,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
+import redis.embedded.RedisServer;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,7 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = RedisTestConfig.class)
 @AutoConfigureMockMvc
 class SecurityConfigTest {
 
@@ -39,6 +43,7 @@ class SecurityConfigTest {
 
     @MockBean(name = "authServiceClient")
     AuthServiceClient authServiceClient;
+
 
     @Test
     @DisplayName("정상적인 token을 갖고 있는 사람이 access했을 경우")

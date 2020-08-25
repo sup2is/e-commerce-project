@@ -1,6 +1,7 @@
 package me.sup2is;
 
 import lombok.RequiredArgsConstructor;
+import me.sup2is.client.MemberServiceClient;
 import me.sup2is.jwt.JwtTokenUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,7 +22,7 @@ import java.io.IOException;
 public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final AuthServiceClient authServiceClient;
+    private final MemberServiceClient memberServiceClient;
     private static final String TOKEN_PREFIX = "Bearer ";
 
     @Override
@@ -32,9 +33,9 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
         if(email != null
             && SecurityContextHolder.getContext().getAuthentication() == null
-            && jwtTokenUtil.validateToken(accessToken)){
+                && jwtTokenUtil.validateToken(accessToken)){
 
-            User user = authServiceClient.getMember(accessToken);
+            User user = memberServiceClient.getMember(email).getData();
             UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(user, accessToken, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

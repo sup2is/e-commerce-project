@@ -6,7 +6,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;

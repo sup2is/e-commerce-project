@@ -1,6 +1,7 @@
 package me.sup2is.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.discovery.converters.Auto;
 import me.sup2is.MemberService;
 import me.sup2is.jwt.JwtTokenUtil;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
 import org.springframework.test.context.ContextConfiguration;
@@ -51,24 +53,24 @@ class AuthenticationControllerTest {
     @MockBean
     JwtAuthenticationGenerator jwtAuthenticationGenerator;
 
-    @MockBean
-    MemberService memberService;
+    @MockBean(name = "memberServiceClient")
+    MemberServiceClient memberServiceClient;
 
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Test
-    public void generateJwtToken() throws Exception {
+    public void generate_jwt_token() throws Exception {
 
         //given
-        Map<String, String> map = new HashMap<>();
-        String username = "choi@example.com";
+        String email = "choi@example.com";
         String password = "qwer!23";
-        map.put("username", username);
-        map.put("password", password);
 
         List<GrantedAuthority> grantedAuthorities = Arrays.asList(new SimpleGrantedAuthority("MEMBER"));
-        User user = new User(username, password, grantedAuthorities);
+        User user = new User(email, password, grantedAuthorities);
 
         JwtTokenUtil jwtTokenUtil = new JwtTokenUtil("temp");
         JwtAuthenticationGenerator real = new JwtAuthenticationGenerator(jwtTokenUtil);
@@ -78,7 +80,11 @@ class AuthenticationControllerTest {
 
         JsonResult<AuthenticationResponseDto> result = new JsonResult<>(dto);
 
-        Mockito.when(memberService.loadUserByUsername(username)).thenReturn(user);
+        User encryptedUser = new User(email, passwordEncoder.encode(password), grantedAuthorities);
+
+        JsonResult<User> memberResult = new JsonResult<>(encryptedUser);
+
+        Mockito.when(memberServiceClient.getMember(email)).thenReturn(memberResult);
         Mockito.when(jwtAuthenticationGenerator.createJwtAuthenticationFromUserDetails(user))
                 .thenReturn(dto);
 
@@ -90,6 +96,29 @@ class AuthenticationControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(objectMapper.writeValueAsString(result)));
+    }
 
+
+    @Test
+    public void generate_jwt_token_password_not_equals() throws Exception {
+
+        //given
+        String email = "choi@example.com";
+        String password = "qwer!23";
+
+        List<GrantedAuthority> grantedAuthorities = Arrays.asList(new SimpleGrantedAuthority("MEMBER"));
+        User user = new User(email, password, grantedAuthorities);
+
+        JsonResult<User> memberResult = new JsonResult<>(user);
+
+        Mockito.when(memberServiceClient.getMember(email)).thenReturn(memberResult);
+
+        //when
+        //then
+        mockMvc.perform(post("/token")
+                .content(objectMapper.writeValueAsString(user))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is(403));
     }
 }

@@ -16,7 +16,7 @@ public class JsonResult<T> {
 
     private Result result;
     private List<String> messages;
-    private ErrorMessage errors;
+    private ErrorMessage error;
     private T data;
 
     public JsonResult(Result result) {
@@ -38,7 +38,7 @@ public class JsonResult<T> {
     public JsonResult(Result result, List<String> messages, ErrorMessage error, T data) {
         this.result = result;
         this.messages = messages;
-        this.errors = error;
+        this.error = error;
         this.data = data;
     }
 

@@ -1,13 +1,15 @@
 package me.sup2is.web;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.validation.FieldError;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorMessage {
 
     private String name;
@@ -19,4 +21,12 @@ public class ErrorMessage {
         errorMessage.message = e.getMessage();
         return errorMessage;
     }
+
+    public static List<ErrorMessage> createFieldErrors(List<FieldError> fieldErrors) {
+        return fieldErrors.stream()
+                .map(error -> new ErrorMessage(error.getField(), error.getDefaultMessage()))
+                .collect(Collectors.toList());
+    }
+
+
 }

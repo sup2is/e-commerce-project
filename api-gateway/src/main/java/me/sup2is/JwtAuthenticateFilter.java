@@ -27,7 +27,7 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
     private final MemberServiceClient memberServiceClient;
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final List<String> EXCLUDE_URL =
-            Arrays.asList("/auth/token");
+            Arrays.asList("/auth/token", "/api/member");
 
 
     @Override

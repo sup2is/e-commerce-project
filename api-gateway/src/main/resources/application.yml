@@ -10,9 +10,10 @@ server:
 
 zuul:
   routes:
-    authentiaction-service:
+    authentication-service:
       path: /auth/**
-      url: http://
+    member-service:
+      path: /api/member/**
 
 eureka:
   instance:

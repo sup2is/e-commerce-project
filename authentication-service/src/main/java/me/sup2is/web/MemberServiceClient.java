@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @FeignClient(name = "member-service", primary = false)
 public interface MemberServiceClient {
 
-    @PostMapping("/member")
+    @PostMapping("/credential")
     JsonResult<Member> getMember(String email);
 
 }

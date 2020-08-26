@@ -27,7 +27,7 @@ class MemberRepositoryTest {
                 .name("sup2is")
                 .password("qwer!23")
                 .phone("010-3132-1089")
-                .zipCode("65482"));
+                .zipCode(65482));
 
         memberRepository.save(member);
 

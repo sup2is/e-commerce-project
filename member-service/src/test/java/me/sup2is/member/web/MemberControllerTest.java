@@ -1,22 +1,24 @@
 package me.sup2is.member.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.sup2is.member.domain.Member;
+import me.sup2is.member.domain.dto.MemberRequestDto;
 import me.sup2is.member.service.MemberService;
-import me.sup2is.web.JsonResult;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Collections;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class MemberControllerTest {
@@ -24,29 +26,32 @@ class MemberControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
-    MemberService memberService;
-
     @Autowired
     ObjectMapper objectMapper;
 
+    @MockBean
+    MemberService memberService;
+
     @Test
-    public void get_member() throws Exception {
+    public void create_member() throws Exception {
         //given
-        String email = "choi@example.com";
-        User user = new User(email, "password", Collections.singleton(new SimpleGrantedAuthority("ROLE_MEMBER")));
+        MemberRequestDto memberRequestDto =
+                new MemberRequestDto("test01@example.com"
+                    ,"qwer!23"
+                    , "test"
+                    , "test"
+                    , 123
+                    , "010-1234-1234");
 
-        JsonResult<User> result = new JsonResult<>(user);
-
-        Mockito.when(memberService.loadUserByUsername(email)).thenReturn(user);
+        Member member = memberRequestDto.toEntity();
 
         //when
         //then
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/member")
-                                            .content(email))
-                    .andExpect(content().string(objectMapper.writeValueAsString(result)));
-
+        mockMvc.perform(MockMvcRequestBuilders.post("/member")
+                    .content(objectMapper.writeValueAsString(member))
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
 

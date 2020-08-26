@@ -39,7 +39,7 @@ class MemberServiceTest {
                                                     .name("sup2is")
                                                     .password("qwer!23")
                                                     .phone("010-3132-1089")
-                                                    .zipCode("65482"));
+                                                    .zipCode(65482));
 
         Mockito.when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
 

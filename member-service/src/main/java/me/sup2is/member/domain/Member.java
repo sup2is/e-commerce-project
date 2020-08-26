@@ -27,7 +27,7 @@ public class Member {
 
     private String address;
 
-    private String zipCode;
+    private int zipCode;
 
     private String phone;
 
@@ -50,7 +50,7 @@ public class Member {
         private String password;
         private String name;
         private String address;
-        private String zipCode;
+        private int zipCode;
         private String phone;
 
         public Builder email(String email) {
@@ -73,7 +73,7 @@ public class Member {
             return this;
         }
 
-        public Builder zipCode(String zipCode) {
+        public Builder zipCode(int zipCode) {
             this.zipCode = zipCode;
             return this;
         }

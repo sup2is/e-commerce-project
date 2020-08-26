@@ -16,6 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -24,6 +26,9 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final MemberServiceClient memberServiceClient;
     private static final String TOKEN_PREFIX = "Bearer ";
+    private static final List<String> EXCLUDE_URL =
+            Arrays.asList("/auth/token");
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -60,5 +65,10 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
         } else {
             throw new BadCredentialsException("Token is required");
         }
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
     }
 }

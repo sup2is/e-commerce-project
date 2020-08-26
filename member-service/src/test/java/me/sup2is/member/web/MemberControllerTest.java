@@ -47,7 +47,29 @@ class MemberControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/member")
+        mockMvc.perform(MockMvcRequestBuilders.post("/")
+                    .content(objectMapper.writeValueAsString(member))
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void create_member_with_validate() throws Exception {
+        //given
+        MemberRequestDto memberRequestDto =
+                new MemberRequestDto("my-validate"
+                    ,"1"
+                    , "test"
+                    , "test"
+                    , 123
+                    , "12341234");
+
+        Member member = memberRequestDto.toEntity();
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/")
                     .content(objectMapper.writeValueAsString(member))
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

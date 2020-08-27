@@ -5,32 +5,29 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.sup2is.member.domain.Member;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 
 @Getter
 @AllArgsConstructor
 public class MemberRequestDto {
 
-    @NotNull
-    @Email
+    @NotEmpty(message = "email must not be null")
+    @Email(message = "invalid email format")
     private String email;
 
-    @NotNull
-    @Min(6)
+    @NotEmpty(message = "password must not be null")
+    @Min(value = 6, message = "password must be greater than {value}")
     private String password;
 
-    @NotNull
+    @NotEmpty(message = "name must not be null")
     private String name;
 
     private String address;
 
     private int zipCode;
 
-    @NotNull
-    @Pattern(regexp="(^$|[0-9]{10})")
+    @NotEmpty(message = "phone must not be null")
+    @Pattern(regexp="(^$|[0-9]{10})", message = "phone format is 010-xxxx-xxxx")
     private String phone;
 
     public Member toEntity() {

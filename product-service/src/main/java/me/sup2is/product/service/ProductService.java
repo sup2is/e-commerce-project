@@ -3,6 +3,7 @@ package me.sup2is.product.service;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.ProductCategory;
+import me.sup2is.product.exception.ProductNotFoundException;
 import me.sup2is.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,10 @@ public class ProductService {
                 .map(c -> ProductCategory.createProductCategory(product, c))
                 .collect(Collectors.toList());
         product.classifyCategories(collect);
+    }
+
+    public Product findOne(Long id) {
+        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("product is not found"));
     }
 
 

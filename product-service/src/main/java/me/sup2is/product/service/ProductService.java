@@ -18,13 +18,15 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final ProductCategoryService productCategoryService;
 
     public void register(Product product, List<String> categoryNames) {
         productRepository.save(product);
-        List<ProductCategory> collect = categoryService.findAllByNames(categoryNames).stream()
+        List<ProductCategory> productCategories = categoryService.findAllByNames(categoryNames).stream()
                 .map(c -> ProductCategory.createProductCategory(product, c))
                 .collect(Collectors.toList());
-        product.classifyCategories(collect);
+        product.classifyCategories(productCategories);
+        productCategoryService.save(productCategories);
     }
 
     public Product findOne(Long id) {

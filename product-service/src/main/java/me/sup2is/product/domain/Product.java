@@ -32,7 +32,7 @@ public class Product {
 
     private Long price;
 
-    @OneToMany
+    @OneToMany(mappedBy = "product")
     private List<ProductCategory> categories = new ArrayList<>();
 
     private boolean salable;
@@ -109,6 +109,7 @@ public class Product {
             product.categories = this.categories;
             product.description = this.description;
             product.sellerId = this.sellerId;
+            product.brandName = this.brandName;
             product.name = this.name;
             product.code = this.code;
             product.price = this.price;

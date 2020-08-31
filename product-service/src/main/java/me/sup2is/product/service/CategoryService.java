@@ -16,7 +16,13 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    public void add(Category category) {
+        categoryRepository.save(category);
+    }
+
+    @Transactional(readOnly = true)
     public List<Category> findAllByNames(Collection<String> categoryNames) {
         return categoryRepository.findAllByNameIn(categoryNames);
     }
+
 }

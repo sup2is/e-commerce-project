@@ -1,6 +1,5 @@
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: create
   profiles:
     active: local
+  application:
+    name: member-service

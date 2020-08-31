@@ -3,14 +3,11 @@ spring:
     discovery:
       enabled: false
 
-  redis:
-    host: localhost
-    port: 6379
-
   jpa:
     show-sql: on
     hibernate:
       ddl-auto: create
+    database-platform: org.hibernate.dialect.H2Dialect
 
   datasource:
     url: jdbc:h2:~/e-commerce-local

@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface CategoryRepository extends CrudRepository<Category, Long> {
     List<Category> findAllByNameIn(Collection<String> categoryNames);
+    Boolean existsByName(String categoryName);
 }

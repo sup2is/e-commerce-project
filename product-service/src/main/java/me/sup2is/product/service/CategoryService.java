@@ -20,8 +20,12 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
-    @Transactional(readOnly = true)
     public List<Category> findAllByNames(Collection<String> categoryNames) {
+        for (String categoryName : categoryNames) {
+            if(!categoryRepository.existsByName(categoryName))
+                add(Category.createCategory(categoryName));
+        }
+        
         return categoryRepository.findAllByNameIn(categoryNames);
     }
 

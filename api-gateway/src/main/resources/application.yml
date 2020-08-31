@@ -1,34 +1,5 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: api-gateway
-  redis:
-    host: 192.168.0.11
-    port: 6379
-
-server:
-  port: 8080
-
-zuul:
-  routes:
-    authentication-service:
-      path: /auth/**
-    member-service:
-      path: /api/member/**
-
-eureka:
-  instance:
-    preferIpAddress: true
-  client:
-    registerWithEureka: true
-    fetchRegistry: true
-    serviceUrl:
-      defaultZone: http://127.0.0.1:8761/eureka/
-
-jwt:
-  secret: my-secret
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: routes

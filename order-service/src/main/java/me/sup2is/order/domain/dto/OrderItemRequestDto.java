@@ -4,16 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.sup2is.order.domain.OrderItem;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @AllArgsConstructor
 public class OrderItemRequestDto {
 
+    @NotNull
     private Long productId;
 
+    @NotNull
     private Long price;
 
+    @NotNull
     private Integer count;
 
+    @NotNull
     private Integer discountRate;
 
     public OrderItem toEntity() {

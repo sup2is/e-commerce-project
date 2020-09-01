@@ -5,6 +5,9 @@ import lombok.Getter;
 import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,8 +15,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OrderRequestDto {
 
+    @NotNull
     private Long memberId;
 
+    @Valid
+    @NotEmpty
     private List<OrderItemRequestDto> orderItems;
 
     public Order toEntity() {

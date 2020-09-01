@@ -37,6 +37,13 @@ public class OrderItem extends AuditTime {
         this.order = order;
     }
 
+    public Long getItemTotalPrice() {
+        long totalPrice = price * count;
+        if(discountRate <= 0) return totalPrice;
+        long dc = totalPrice / discountRate;
+        return totalPrice - dc;
+    }
+
     public static class Builder {
 
         private Long productId;

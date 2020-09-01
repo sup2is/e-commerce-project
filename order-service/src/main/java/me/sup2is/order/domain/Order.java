@@ -54,7 +54,7 @@ public class Order extends AuditTime{
 
     private void setTotalPrice() {
         this.totalPrice = this.orderItems.stream()
-                .map(orderItem -> orderItem.getPrice() * orderItem.getCount())
+                .map(orderItem -> orderItem.getItemTotalPrice())
                 .reduce(0L, Long::sum);
     }
 

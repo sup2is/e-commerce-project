@@ -69,5 +69,8 @@ class OrderServiceTest {
         assertNotNull(orderItem1.getOrder());
         assertNotNull(orderItem2.getOrder());
 
+        assertNotNull(order.getCreateAt());
+        assertNotNull(order.getUpdatedAt());
+
     }
 }

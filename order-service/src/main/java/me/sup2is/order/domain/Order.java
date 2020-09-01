@@ -3,8 +3,10 @@ package me.sup2is.order.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.sup2is.order.domain.audit.AuditTime;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order{
+public class Order extends AuditTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +30,16 @@ public class Order{
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    @Override
+    public LocalDateTime getCreateAt() {
+        return super.getCreateAt();
+    }
+
+    @Override
+    public LocalDateTime getUpdatedAt() {
+        return super.getUpdatedAt();
+    }
 
     public static Order createOrder(Builder builder) {
         Order order = builder.build();

@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class OrderItem extends AuditTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_item_id")
     private Long id;
 

@@ -14,7 +14,7 @@ public class Authority implements GrantedAuthority {
 
     @Id
     @Column(name = "auth_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

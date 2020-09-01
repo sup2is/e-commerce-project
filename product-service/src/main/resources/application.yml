@@ -1,19 +1,8 @@
 spring:
-  redis:
-    host: localhost
-    port: 6379
-  jpa:
-    show-sql: on
-    hibernate:
-      ddl-auto: create
   profiles:
     active: local
   application:
     name: product-service
-  datasource:
-    url: jdbc:h2:~/e-commerce-product
-
-
 
 eureka:
   instance:
@@ -24,7 +13,3 @@ eureka:
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
 
-jwt:
-  secret: my-secret
-server:
-  port: 8083

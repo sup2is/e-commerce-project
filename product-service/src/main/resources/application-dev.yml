@@ -11,3 +11,11 @@ eureka:
     fetchRegistry: true
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
+
+datasource:
+  url: jdbc:h2:~/e-commerce-dev
+
+jwt:
+  secret: my-secret
+server:
+  port: 8083

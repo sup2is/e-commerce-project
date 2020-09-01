@@ -19,7 +19,6 @@ public class OrderItemRequestDto {
     @NotNull
     private Integer count;
 
-    @NotNull
     private Integer discountRate;
 
     public OrderItem toEntity() {

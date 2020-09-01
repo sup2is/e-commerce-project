@@ -39,7 +39,7 @@ public class OrderItem extends AuditTime {
 
     public Long getItemTotalPrice() {
         long totalPrice = price * count;
-        if(discountRate <= 0) return totalPrice;
+        if(discountRate != null && discountRate <= 0) return totalPrice;
         long dc = totalPrice / discountRate;
         return totalPrice - dc;
     }

@@ -1,60 +1,46 @@
 package me.sup2is.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.sup2is.client.dto.MemberClientDto;
+import me.sup2is.dto.AuthenticationResponseDto;
+import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
+import me.sup2is.service.AuthenticationService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = {
-        RedisConnectionFactory.class
-        , BCryptPasswordEncoder.class
-        , AuthenticationController.class})
-@AutoConfigureMockMvc
-@EnableAutoConfiguration(exclude = {RedisAutoConfiguration.class
-        , SecurityAutoConfiguration.class})
+@WebMvcTest(controllers = AuthenticationController.class,
+        excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 class AuthenticationControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    JwtAuthenticationGenerator jwtAuthenticationGenerator;
+    AuthenticationService authenticationService;
 
-    @MockBean(name = "memberServiceClient")
-    MemberServiceClient memberServiceClient;
+    @MockBean
+    JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
-    PasswordEncoder passwordEncoder;
 
     @Test
     public void generate_jwt_token() throws Exception {
@@ -63,28 +49,35 @@ class AuthenticationControllerTest {
         Map<String, String> userMap = new HashMap<>();
         String email = "choi@example.com";
         String password = "qwer!23";
+
         userMap.put("username", email);
         userMap.put("password", password);
 
-        List<GrantedAuthority> grantedAuthorities = Arrays.asList(new SimpleGrantedAuthority("MEMBER"));
-        User user = new User(email, password, grantedAuthorities);
+        MemberClientDto expect = MemberClientDto.builder()
+                .address("서울 강남")
+                .authorities(Arrays.asList("MEMBER"))
+                .email(email)
+                .enable(true)
+                .name("choi")
+                .password(password)
+                .phone("010-3132-1089")
+                .zipCode(12345)
+                .build();
 
-        JwtTokenUtil jwtTokenUtil = new JwtTokenUtil("temp");
-        JwtAuthenticationGenerator real = new JwtAuthenticationGenerator(jwtTokenUtil);
+        Mockito.when(authenticationService.authenticateByEmailAndPassword(email, password))
+                .thenReturn(expect);
+        String expectAccessToken = "test_access_token";
+        Mockito.when(jwtTokenUtil.generateToken(email, JwtTokenType.AUTH))
+                .thenReturn(expectAccessToken);
+        String expectRefreshToken = "test_refresh_token";
+        Mockito.when(jwtTokenUtil.generateToken(email, JwtTokenType.REFRESH))
+                .thenReturn(expectRefreshToken);
 
-        AuthenticationResponseDto dto =
-                real.createJwtAuthenticationFromUserDetails(user);
+        AuthenticationResponseDto authenticationFromTokens =
+                AuthenticationResponseDto
+                        .createAuthenticationFromTokens(expectAccessToken, expectRefreshToken);
 
-        JsonResult<AuthenticationResponseDto> result = new JsonResult<>(dto);
-
-        Member encryptedUser = new Member(email, password, grantedAuthorities);
-
-        JsonResult<Member> memberResult = new JsonResult<>(encryptedUser);
-
-        Mockito.when(memberServiceClient.getMember(email)).thenReturn(memberResult);
-        Mockito.when(jwtAuthenticationGenerator.createJwtAuthenticationFromUserDetails(user))
-                .thenReturn(dto);
-        Mockito.when(passwordEncoder.matches(password,password)).thenReturn(true);
+        JsonResult<?> jsonResult = new JsonResult<>(authenticationFromTokens);
 
         //when
         //then
@@ -93,7 +86,7 @@ class AuthenticationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(result)));
+                .andExpect(content().string(objectMapper.writeValueAsString(jsonResult)));
     }
 
 
@@ -104,26 +97,24 @@ class AuthenticationControllerTest {
         Map<String, String> userMap = new HashMap<>();
         String email = "choi@example.com";
         String password = "qwer!23";
+
         userMap.put("username", email);
         userMap.put("password", password);
 
+        Mockito.when(authenticationService.authenticateByEmailAndPassword(email, password))
+                .thenThrow(new BadCredentialsException("Password not matched"));
 
-        List<GrantedAuthority> grantedAuthorities = Arrays.asList(new SimpleGrantedAuthority("MEMBER"));
-        Member user = new Member(email, password, grantedAuthorities);
+        JsonResult<?> expect = new JsonResult<>(new BadCredentialsException("Password not matched"));
 
-        JsonResult<Member> memberResult = new JsonResult<>(user);
-
-        Mockito.when(memberServiceClient.getMember(email)).thenReturn(memberResult);
-        Mockito.when(passwordEncoder.matches(password,password)).thenReturn(false);
 
         //when
         //then
-        assertThatThrownBy(() ->
-                mockMvc.perform(post("/token")
+        mockMvc.perform(post("/token")
                 .content(objectMapper.writeValueAsString(userMap))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())).hasCause(new BadCredentialsException("Password not matched"));
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string(objectMapper.writeValueAsString(expect)));
 
     }
 }

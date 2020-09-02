@@ -1,4 +1,4 @@
-package me.sup2is.web;
+package me.sup2is.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

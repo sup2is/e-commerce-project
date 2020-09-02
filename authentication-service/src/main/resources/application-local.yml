@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    discovery:
+      enabled: false
+
+jwt:
+  secret: my-secret
+
+server:
+  port: 8081

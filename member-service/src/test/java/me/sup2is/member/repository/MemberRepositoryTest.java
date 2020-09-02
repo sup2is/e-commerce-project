@@ -1,6 +1,8 @@
 package me.sup2is.member.repository;
 
+import me.sup2is.member.domain.Authority;
 import me.sup2is.member.domain.Member;
+import me.sup2is.member.service.AuthorityService;
 import me.sup2is.member.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-@Import(MemberService.class)
+@Import({MemberService.class, AuthorityService.class})
 class MemberRepositoryTest {
 
     @Autowired

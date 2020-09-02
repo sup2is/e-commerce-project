@@ -1,24 +1,15 @@
 package me.sup2is.member.service;
 
+import me.sup2is.member.domain.Auth;
+import me.sup2is.member.domain.Authority;
 import me.sup2is.member.domain.Member;
 import me.sup2is.member.exception.MemberNotFoundException;
-import me.sup2is.member.repository.MemberRepository;
+import me.sup2is.member.repository.AuthorityRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,10 +17,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DataJpaTest
 @Import({MemberService.class, AuthorityService.class})
 @Transactional
-class MemberServiceTest {
+class MemberAuthorityServiceTest {
 
     @Autowired
     MemberService memberService;
+
+    @Autowired
+    AuthorityService authorityService;
+
+    @Autowired
+    AuthorityRepository authorityRepository;
 
     @Test
     public void find_one() {
@@ -46,18 +43,11 @@ class MemberServiceTest {
 
         //when
         Member findMember = memberService.findOne(member.getId());
+        Authority authority = authorityRepository.findById(member.getAuthorities().get(0).getId()).get();
 
         //then
         assertEquals(member, findMember);
-    }
-
-
-    @Test
-    public void find_one_not_exist() {
-        //given
-        //when
-        //then
-        assertThrows(MemberNotFoundException.class, () -> memberService.findOne(2L));
+        assertEquals(Auth.MEMBER, authority.getAuth());
     }
 
 }

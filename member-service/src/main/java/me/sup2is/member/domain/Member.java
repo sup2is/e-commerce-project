@@ -1,17 +1,22 @@
 package me.sup2is.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Member {
 
     @Id
@@ -37,7 +42,12 @@ public class Member {
     private boolean enable;
 
     public static Member createMember(Builder builder) {
-        return builder.build();
+        Member member = builder.build();
+
+        //todo role 구분해야함 일단 member로 지정
+        member.authorities = Arrays.asList(Authority.createAuthority(member, Auth.MEMBER));
+
+        return member;
     }
 
     public void encryptPassword(PasswordEncoder passwordEncoder) {

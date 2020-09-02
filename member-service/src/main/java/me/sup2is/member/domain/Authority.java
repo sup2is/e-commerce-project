@@ -1,5 +1,7 @@
 package me.sup2is.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Authority implements GrantedAuthority {
 
     @Id
@@ -18,6 +21,7 @@ public class Authority implements GrantedAuthority {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Enumerated(EnumType.STRING)
@@ -26,5 +30,12 @@ public class Authority implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return this.auth.name();
+    }
+
+    public static Authority createAuthority(Member member, Auth auth) {
+        Authority authority = new Authority();
+        authority.auth = auth;
+        authority.member = member;
+        return authority;
     }
 }

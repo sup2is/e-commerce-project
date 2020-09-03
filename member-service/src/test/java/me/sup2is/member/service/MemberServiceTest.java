@@ -1,5 +1,6 @@
 package me.sup2is.member.service;
 
+import javassist.bytecode.DuplicateMemberException;
 import me.sup2is.member.domain.Member;
 import me.sup2is.member.exception.MemberNotFoundException;
 import me.sup2is.member.repository.MemberRepository;
@@ -33,7 +34,7 @@ class MemberServiceTest {
     MemberService memberService;
 
     @Test
-    public void find_one() {
+    public void find_one() throws DuplicateMemberException {
         //given
         Member.Builder builder = new Member.Builder();
         Member member = Member.createMember(builder.address("서울시 강남구")
@@ -60,6 +61,32 @@ class MemberServiceTest {
         //when
         //then
         assertThrows(MemberNotFoundException.class, () -> memberService.findOne(2L));
+    }
+
+    @Test
+    public void save_duplicate_email() throws DuplicateMemberException {
+        //given
+        Member.Builder builder = new Member.Builder();
+        Member member = Member.createMember(builder.address("서울시 강남구")
+                .email("dev.sup2is@gmail.com")
+                .name("sup2is")
+                .password("qwer!23")
+                .phone("010-3132-1089")
+                .zipCode(65482)
+                .authorities(Arrays.asList("MEMBER")));
+
+        memberService.save(member);
+        Member newMember = Member.createMember(builder.address("서울시 강남구2222")
+                .email("dev.sup2is@gmail.com")
+                .name("sup2is222")
+                .password("qwer!23222")
+                .phone("010-3132-1089")
+                .zipCode(65482)
+                .authorities(Arrays.asList("MEMBER")));
+
+        //when
+        //then
+        assertThrows(DuplicateMemberException.class, () -> memberService.save(newMember));
     }
 
 }

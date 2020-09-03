@@ -1,5 +1,6 @@
 package me.sup2is.member.service;
 
+import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.member.domain.Authority;
 import me.sup2is.member.domain.Member;
@@ -21,7 +22,10 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AuthorityService authorityService;
 
-    public void save(Member member) {
+    public void save(Member member) throws DuplicateMemberException {
+        if(memberRepository.findByEmail(member.getEmail()).isPresent())
+            throw new DuplicateMemberException(member.getEmail() + " is duplicated");
+
         for (Authority authority : member.getAuthorities())
             authorityService.save(authority);
 

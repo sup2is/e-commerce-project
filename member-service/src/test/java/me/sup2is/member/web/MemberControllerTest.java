@@ -2,11 +2,13 @@ package me.sup2is.member.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javassist.bytecode.DuplicateMemberException;
 import me.sup2is.member.domain.Member;
 import me.sup2is.member.domain.dto.MemberRequestDto;
 import me.sup2is.member.service.MemberService;
 import me.sup2is.web.ErrorMessage;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,9 +28,11 @@ import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doAnswer;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static reactor.core.publisher.Mono.when;
 
 @WebMvcTest(excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class MemberControllerTest {
@@ -85,6 +89,5 @@ class MemberControllerTest {
                 .andDo(print())
                 .andExpect(status().is(400));
     }
-
 
 }

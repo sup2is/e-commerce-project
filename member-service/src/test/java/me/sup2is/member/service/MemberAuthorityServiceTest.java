@@ -1,5 +1,6 @@
 package me.sup2is.member.service;
 
+import javassist.bytecode.DuplicateMemberException;
 import me.sup2is.member.domain.Auth;
 import me.sup2is.member.domain.Authority;
 import me.sup2is.member.domain.Member;
@@ -30,7 +31,7 @@ class MemberAuthorityServiceTest {
     AuthorityRepository authorityRepository;
 
     @Test
-    public void find_one() {
+    public void find_one() throws DuplicateMemberException {
         //given
         Member.Builder builder = new Member.Builder();
         Member member = Member.createMember(builder.address("서울시 강남구")

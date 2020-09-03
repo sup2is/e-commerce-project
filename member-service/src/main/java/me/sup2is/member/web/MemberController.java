@@ -1,5 +1,6 @@
 package me.sup2is.member.web;
 
+import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.member.domain.dto.MemberRequestDto;
 import me.sup2is.member.service.MemberService;
@@ -22,9 +23,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<JsonResult<?>> saveMember(
-            @RequestBody @Valid MemberRequestDto memberRequestDto, BindingResult bindingResult) {
+            @RequestBody @Valid MemberRequestDto memberRequestDto, BindingResult bindingResult) throws DuplicateMemberException {
         if(bindingResult.hasErrors())
             return new ResponseEntity<>(new JsonResult<>(bindingResult.getFieldErrors()), HttpStatus.BAD_REQUEST);
 

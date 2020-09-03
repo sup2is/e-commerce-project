@@ -19,14 +19,28 @@ eureka:
       defaultZone: http://127.0.0.1:8761/eureka/
 
 zuul:
+#  ignored-services: "*"
   routes:
     authentication-service:
       path: /auth/**
+      serviceId: authentication-service
     member-service:
       path: /api/member/**
+      serviceId: member-service
+    order-service:
+      path: /api/order/**
+      serviceId: order-service
+    product-service:
+      path: /api/product/**
+      serviceId: product-service
+
 
 management:
   endpoints:
     web:
       exposure:
         include: routes
+
+logging:
+  level:
+    org.springframework: DEBUG

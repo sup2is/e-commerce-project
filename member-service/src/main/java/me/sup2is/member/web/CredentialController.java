@@ -2,6 +2,7 @@ package me.sup2is.member.web;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.sup2is.member.client.dto.MemberClientDto;
 import me.sup2is.member.service.MemberService;
 import me.sup2is.web.JsonResult;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,9 @@ public class CredentialController {
 
     @PostMapping("/credential")
     public ResponseEntity<JsonResult<?>> getMember(@RequestBody @NonNull String email) {
-        return ResponseEntity.ok(new JsonResult<>(memberService.loadUserByUsername(email)));
+        MemberClientDto memberClientDto =
+                MemberClientDto.createMemberClientDto(memberService.findByEmail(email));
+        return ResponseEntity.ok(new JsonResult<>(memberClientDto));
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +30,8 @@ class MemberRepositoryTest {
                 .name("sup2is")
                 .password("qwer!23")
                 .phone("010-3132-1089")
-                .zipCode(65482));
+                .zipCode(65482)
+                .authorities(Arrays.asList("MEMBER")));
 
         memberRepository.save(member);
 

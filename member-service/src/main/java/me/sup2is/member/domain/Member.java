@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -62,6 +62,8 @@ public class Member {
         private String address;
         private int zipCode;
         private String phone;
+        private boolean enable;
+        private List<String> authorities;
 
         public Builder email(String email) {
             this.email = email;
@@ -93,6 +95,16 @@ public class Member {
             return this;
         }
 
+        public Builder enable(boolean enable) {
+            this.enable = enable;
+            return this;
+        }
+
+        public Builder authorities(List<String> authorities) {
+            this.authorities = authorities;
+            return this;
+        }
+
         private Member build() {
             Member member = new Member();
             member.email = this.email;
@@ -101,6 +113,10 @@ public class Member {
             member.address = this.address;
             member.zipCode = this.zipCode;
             member.phone = this.phone;
+            member.enable = this.enable;
+            member.authorities = this.authorities.stream()
+                    .map(a -> Authority.createAuthority(member, Auth.valueOf(a)))
+                    .collect(Collectors.toList());
             return member;
         }
     }

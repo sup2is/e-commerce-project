@@ -5,18 +5,17 @@ import me.sup2is.member.domain.Authority;
 import me.sup2is.member.domain.Member;
 import me.sup2is.member.exception.MemberNotFoundException;
 import me.sup2is.member.repository.MemberRepository;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static java.util.stream.Collectors.toList;
+
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class MemberService implements UserDetailsService {
+public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -25,7 +24,6 @@ public class MemberService implements UserDetailsService {
     public void save(Member member) {
         for (Authority authority : member.getAuthorities())
             authorityService.save(authority);
-
 
         member.encryptPassword(passwordEncoder);
         memberRepository.save(member);
@@ -37,16 +35,9 @@ public class MemberService implements UserDetailsService {
                 () -> new MemberNotFoundException("member not found"));
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        //email 받아서 user객체로 보내야함
-        Member member = memberRepository.findByEmail(email).orElseThrow(
+    @Transactional(readOnly = true)
+    public Member findByEmail(String email) throws UsernameNotFoundException {
+        return memberRepository.findByEmail(email).orElseThrow(
                 () -> new MemberNotFoundException("member not found"));
-
-        User user = new User(member.getEmail()
-                , member.getPassword()
-                , member.getAuthorities());
-
-        return user;
     }
 }

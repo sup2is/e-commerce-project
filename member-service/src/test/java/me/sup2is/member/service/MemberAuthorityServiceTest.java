@@ -3,13 +3,14 @@ package me.sup2is.member.service;
 import me.sup2is.member.domain.Auth;
 import me.sup2is.member.domain.Authority;
 import me.sup2is.member.domain.Member;
-import me.sup2is.member.exception.MemberNotFoundException;
 import me.sup2is.member.repository.AuthorityRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,7 +38,8 @@ class MemberAuthorityServiceTest {
                                                     .name("sup2is")
                                                     .password("qwer!23")
                                                     .phone("010-3132-1089")
-                                                    .zipCode(65482));
+                                                    .zipCode(65482)
+                                                    .authorities(Arrays.asList("MEMBER")));
 
         memberService.save(member);
 

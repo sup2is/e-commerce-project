@@ -1,6 +1,5 @@
 package me.sup2is.member.domain.dto;
 
-import me.sup2is.member.domain.Member;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;

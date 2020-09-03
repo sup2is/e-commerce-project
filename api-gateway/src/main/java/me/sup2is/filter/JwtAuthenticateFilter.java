@@ -1,4 +1,4 @@
-package me.sup2is;
+package me.sup2is.filter;
 
 import lombok.RequiredArgsConstructor;
 import me.sup2is.client.MemberServiceClient;
@@ -40,7 +40,7 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
             && SecurityContextHolder.getContext().getAuthentication() == null
                 && jwtTokenUtil.validateToken(accessToken)){
 
-            User user = memberServiceClient.getMember(email).getData();
+            User user = memberServiceClient.getMember(email).getData().toUser();
             UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(user, accessToken, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

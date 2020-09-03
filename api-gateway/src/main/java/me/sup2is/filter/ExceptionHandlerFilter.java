@@ -1,4 +1,4 @@
-package me.sup2is;
+package me.sup2is.filter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +28,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try{
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             resolver.resolveException(httpServletRequest, httpServletResponse, null , e);
         }
     }

@@ -1,6 +1,7 @@
 package me.sup2is;
 
 import me.sup2is.client.MemberServiceClient;
+import me.sup2is.client.dto.MemberClientDto;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.web.JsonResult;
@@ -8,36 +9,27 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
+import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+import org.springframework.cloud.openfeign.ribbon.FeignRibbonClientAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = {
-        RedisConnectionFactory.class
-        , JwtTokenUtil.class
-        , BCryptPasswordEncoder.class})
-@AutoConfigureMockMvc
-@EnableAutoConfiguration(exclude = {RedisAutoConfiguration.class
-        , SecurityAutoConfiguration.class})
-class SecurityConfigTest {
+@WebMvcTest
+@Import({JwtTokenUtil.class,
+        RibbonAutoConfiguration.class,
+        FeignRibbonClientAutoConfiguration.class,
+        FeignAutoConfiguration.class})
+class JwtAuthenticateFilterTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -48,20 +40,24 @@ class SecurityConfigTest {
     @MockBean(name = "memberServiceClient")
     MemberServiceClient memberServiceClient;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
     @Test
-    @WithMockUser(username = "choi@example.com" , roles = "ROME_MEMBER")
     @DisplayName("정상적인 token을 갖고 있는 사람이 access했을 경우")
     public void access_auth_user_valid_token() throws Exception{
         //given
         String email = "choi@example.com";
-        String password = "qwer!23";
-        List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_MEMBER");
-        User user = new User(email, passwordEncoder.encode(password), grantedAuthorities);
 
-        JsonResult<User> result = new JsonResult<>(user);
+        MemberClientDto expect = MemberClientDto.builder()
+                .address("서울 강남")
+                .authorities(Arrays.asList("MEMBER"))
+                .email(email)
+                .enable(true)
+                .name("choi")
+                .password("qwer!23")
+                .phone("010-3132-1089")
+                .zipCode(12345)
+                .build();
+
+        JsonResult<MemberClientDto> result = new JsonResult<>(expect);
 
         String accessToken = jwtTokenUtil.generateToken("choi@example.com", JwtTokenType.AUTH);
         Mockito.when(memberServiceClient.getMember(email)).thenReturn(result);

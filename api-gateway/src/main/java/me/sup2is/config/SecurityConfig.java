@@ -1,6 +1,8 @@
-package me.sup2is;
+package me.sup2is.config;
 
 import lombok.RequiredArgsConstructor;
+import me.sup2is.filter.ExceptionHandlerFilter;
+import me.sup2is.filter.JwtAuthenticateFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

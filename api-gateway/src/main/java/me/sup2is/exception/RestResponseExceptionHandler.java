@@ -1,4 +1,4 @@
-package me.sup2is;
+package me.sup2is.exception;
 
 import me.sup2is.web.JsonResult;
 import org.springframework.http.HttpStatus;

@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/category")
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @PostMapping("/")
+    @PostMapping("/category")
     public ResponseEntity<JsonResult<?>> addCategory(@RequestBody @Valid CategoryRequestDto categoryRequestDto,
                                                      BindingResult bindingResult) {
         if(bindingResult.hasErrors())

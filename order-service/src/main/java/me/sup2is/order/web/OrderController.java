@@ -2,6 +2,7 @@ package me.sup2is.order.web;
 
 import lombok.RequiredArgsConstructor;
 import me.sup2is.order.domain.dto.OrderRequestDto;
+import me.sup2is.order.exception.OutOfStockException;
 import me.sup2is.order.service.OrderService;
 import me.sup2is.web.JsonResult;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class OrderController {
 
     @PostMapping("/")
     public ResponseEntity<JsonResult<?>> order(@RequestBody @Valid OrderRequestDto orderRequestDto,
-                                               BindingResult bindingResult) {
+                                               BindingResult bindingResult) throws OutOfStockException {
         if(bindingResult.hasErrors())
             return new ResponseEntity<>(new JsonResult<>(bindingResult.getFieldErrors()), HttpStatus.BAD_REQUEST);
 

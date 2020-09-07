@@ -36,5 +36,11 @@ public class ProductService {
         return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("product is not found"));
     }
 
-
+    public void modifyStock(List<ProductStockDto> productStockDto) {
+        for (ProductStockDto stockDto : productStockDto) {
+            Product p = findOne(stockDto.getProductId());
+            p.modifyStock(stockDto.getStock());
+            productStockService.insertStock(new ProductStockDto(p.getId(), p.getStock()));
+        }
+    }
 }

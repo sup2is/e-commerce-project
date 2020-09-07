@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.ProductCategory;
 import me.sup2is.product.domain.dto.ProductRequestDto;
+import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,6 +67,21 @@ class ProductControllerTest {
             .andExpect(status().isOk());
     }
 
+    @Test
+    public void modify_stock() throws Exception {
+        //given
+
+        ProductStockDto productStockDto1 = new ProductStockDto(1, 5);
+        ProductStockDto productStockDto2 = new ProductStockDto(2, -2);
+
+        //when
+        //then
+        mockMvc.perform(put("/stock")
+                .content(objectMapper.writeValueAsString(Arrays.asList(productStockDto1, productStockDto2)))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 
 
 

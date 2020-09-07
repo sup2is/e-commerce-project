@@ -5,6 +5,7 @@ import me.sup2is.order.domain.OrderItem;
 import me.sup2is.order.domain.dto.OrderItemRequestDto;
 import me.sup2is.order.domain.dto.OrderRequestDto;
 import me.sup2is.order.service.OrderService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -38,28 +39,30 @@ class OrderControllerTest {
     ObjectMapper objectMapper;
 
     @Test
+    @DisplayName("/order 요청시 orderItemRequest 파라미터 검사")
     public void order_invalid_parameter() throws Exception {
         //given
         OrderItemRequestDto orderItemRequestDto1 = new OrderItemRequestDto(1L, 20000L, 4, 0);
         OrderItemRequestDto orderItemRequestDto2 = new OrderItemRequestDto(1L, null, 2, 0);
 
-        List<OrderItemRequestDto> orderItemRequestDtos = Arrays.asList(orderItemRequestDto1, orderItemRequestDto2);
+        List<OrderItemRequestDto> orderItemRequestDto = Arrays.asList(orderItemRequestDto1, orderItemRequestDto2);
 
-        OrderRequestDto orderRequestDto = new OrderRequestDto(null, orderItemRequestDtos);
+        OrderRequestDto orderRequestDto = new OrderRequestDto(null, orderItemRequestDto);
 
         //when
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/")
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/")
                 .content(objectMapper.writeValueAsString(orderRequestDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is(400))
                 .andReturn();
 
-        //then
 
     }
 
     @Test
+    @DisplayName("/order 요청시 orderItemRequest 사이즈 검사")
     public void order_empty_order_item() throws Exception {
         //given
         OrderRequestDto orderRequestDto = new OrderRequestDto(1L, new ArrayList<>());
@@ -70,6 +73,18 @@ class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is(400));
+
+        //then
+
+    }
+    @Test
+    @DisplayName("주문 취소")
+    public void order_cancel() throws Exception {
+        //given
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/1/cancel"))
+                .andDo(print())
+                .andExpect(status().is(200));
 
         //then
 

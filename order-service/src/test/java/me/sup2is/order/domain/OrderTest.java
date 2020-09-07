@@ -1,5 +1,6 @@
 package me.sup2is.order.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderTest {
 
     @Test
+    @DisplayName("orderItems들 총합 totalPrice 계산")
     public void calculate_total_price() {
         //given
         OrderItem.Builder itemBuilder = new OrderItem.Builder();
@@ -33,6 +35,7 @@ class OrderTest {
     }
 
     @Test
+    @DisplayName("orderItems들 총합 totalPrice 계산 & 할인율 계산")
     public void calculate_discount_rate() {
         //given
         OrderItem.Builder itemBuilder = new OrderItem.Builder();

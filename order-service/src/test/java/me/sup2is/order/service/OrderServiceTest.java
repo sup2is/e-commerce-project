@@ -7,6 +7,8 @@ import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
 import me.sup2is.order.domain.OrderStatus;
 import me.sup2is.order.domain.dto.ProductStockDto;
+import me.sup2is.order.exception.CancelFailureException;
+import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
 import me.sup2is.order.repository.OrderItemRepository;
 import me.sup2is.order.repository.OrderRepository;
@@ -30,6 +32,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static reactor.core.publisher.Mono.when;
 
 @DataJpaTest
@@ -53,7 +57,7 @@ class OrderServiceTest {
     OrderItemRepository orderItemRepository;
 
     @MockBean
-    HashOperations<String, String, ProductStockDto> productStockDtoHashOperations;
+    CachedProductStockService cachedProductStockService;
 
     @MockBean(name = "productServiceClient")
     ProductServiceClient productServiceClient;
@@ -62,6 +66,7 @@ class OrderServiceTest {
     PaymentModuleClient paymentModuleClient;
 
     @Test
+    @DisplayName("정상적인 order와 orderItems의 save")
     public void save() throws OutOfStockException {
         //given
         OrderItem.Builder itemBuilder = new OrderItem.Builder();
@@ -78,9 +83,6 @@ class OrderServiceTest {
                 .memberId(10L);
 
         Order order = Order.createOrder(orderBuilder);
-        Mockito.when(productStockDtoHashOperations.get(anyString(), anyString()))
-                .thenReturn(new ProductStockDto(orderItem1.getProductId(),orderItem1.getCount()));
-
 
         //when
         orderService.order(order);
@@ -90,7 +92,7 @@ class OrderServiceTest {
 
         assertEquals(order, findOrder);
         assertEquals(40000, order.getTotalPrice());
-        assertEquals(OrderStatus.CHECK, order.getOrderStatus());
+        assertEquals(OrderStatus.ORDER, order.getOrderStatus());
         assertEquals(order, orderItem1.getOrder());
         assertEquals(order, orderItem2.getOrder());
 
@@ -126,13 +128,43 @@ class OrderServiceTest {
                 .memberId(10L);
 
         Order order = Order.createOrder(orderBuilder);
-        Mockito.when(productStockDtoHashOperations.get(anyString(), anyString()))
-                .thenReturn(new ProductStockDto(orderItem1.getProductId(),orderItem1.getCount() - 1));
 
+        doThrow(new OutOfStockException(""))
+                .when(cachedProductStockService)
+                .checkItemStock(orderItem1);
 
         //when
         //then
         assertThrows(OutOfStockException.class, () -> orderService.order(order));
+    }
+
+    @Test
+    @DisplayName("주문 취소")
+    public void cancel() throws OutOfStockException, CancelFailureException, OrderNotFoundException {
+        //given
+        OrderItem.Builder itemBuilder = new OrderItem.Builder();
+        itemBuilder.productId(1L)
+                .price(10000L)
+                .discountRate(0)
+                .count(2);
+        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
+        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
+
+        Order.Builder orderBuilder = new Order.Builder();
+        List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
+        orderBuilder.orderItems(orderItems)
+                .memberId(10L);
+
+        Order order = Order.createOrder(orderBuilder);
+        orderService.order(order);
+
+        //when
+        orderService.cancel(order.getId());
+
+        //then
+        assertEquals(OrderStatus.CANCEL, order.getOrderStatus());
+        assertEquals(OrderStatus.CANCEL, order.getOrderItems().get(0).getOrderStatus());
+        assertEquals(OrderStatus.CANCEL, order.getOrderItems().get(1).getOrderStatus());
     }
 
 }

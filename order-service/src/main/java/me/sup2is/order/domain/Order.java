@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.sup2is.order.domain.audit.AuditTime;
+import me.sup2is.order.exception.CancelFailureException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -44,7 +45,7 @@ public class Order extends AuditTime{
     public static Order createOrder(Builder builder) {
         Order order = builder.build();
 
-        order.orderStatus = OrderStatus.CHECK;
+        order.orderStatus = OrderStatus.ORDER;
         for (OrderItem orderItem : order.orderItems)
             orderItem.setOrder(order);
 
@@ -56,6 +57,15 @@ public class Order extends AuditTime{
         this.totalPrice = this.orderItems.stream()
                 .map(orderItem -> orderItem.getItemTotalPrice())
                 .reduce(0L, Long::sum);
+    }
+
+    public void cancel() throws CancelFailureException {
+        if (this.orderStatus == OrderStatus.ORDER || this.orderStatus == OrderStatus.CHECK) {
+            this.orderStatus = OrderStatus.CANCEL;
+            return;
+        }
+
+        throw new CancelFailureException(this.getId() + " is already " + this.orderStatus);
     }
 
     public static class Builder {

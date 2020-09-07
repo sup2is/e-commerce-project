@@ -2,12 +2,15 @@ package me.sup2is.order.web;
 
 import lombok.RequiredArgsConstructor;
 import me.sup2is.order.domain.dto.OrderRequestDto;
+import me.sup2is.order.exception.CancelFailureException;
+import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
 import me.sup2is.order.service.OrderService;
 import me.sup2is.web.JsonResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,4 +32,11 @@ public class OrderController {
         orderService.order(orderRequestDto.toEntity());
         return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
     }
+
+    @PostMapping("{orderId}/cancel")
+    public ResponseEntity<JsonResult<?>> cancel(@PathVariable Long orderId) throws CancelFailureException, OrderNotFoundException {
+        orderService.cancel(orderId);
+        return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
+    }
+
 }

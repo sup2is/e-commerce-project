@@ -29,8 +29,13 @@ public class OrderItem extends AuditTime {
 
     private Integer discountRate;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
     public static OrderItem createOrderItem(Builder builder) {
-        return builder.build();
+        OrderItem orderItem = builder.build();
+        orderItem.orderStatus = OrderStatus.ORDER;
+        return orderItem;
     }
 
     public void setOrder(Order order){
@@ -42,6 +47,10 @@ public class OrderItem extends AuditTime {
         if(discountRate != null && discountRate <= 0) return totalPrice;
         long dc = totalPrice / discountRate;
         return totalPrice - dc;
+    }
+
+    public void cancel() {
+        this.orderStatus = OrderStatus.CANCEL;
     }
 
     public static class Builder {

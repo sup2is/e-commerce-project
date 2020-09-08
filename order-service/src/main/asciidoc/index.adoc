@@ -1,0 +1,14 @@
+= Order Service
+:sectnums:
+:toc: left
+:toclevels: 4
+:toc-title: My Content
+
+※ Spring Cloud 환경에서 Order Service에 대한 모든 요청은 JWT 토큰 必
+
+
+== 주문
+
+include::{snippets}/create-order/http-request.adoc[]
+include::{snippets}/create-order/request-fields.adoc[]
+

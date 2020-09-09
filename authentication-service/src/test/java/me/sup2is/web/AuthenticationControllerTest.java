@@ -1,7 +1,7 @@
 package me.sup2is.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.sup2is.client.dto.MemberClientDto;
+import me.sup2is.client.dto.MemberDto;
 import me.sup2is.dto.AuthenticationResponseDto;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
@@ -53,7 +53,7 @@ class AuthenticationControllerTest {
         userMap.put("username", email);
         userMap.put("password", password);
 
-        MemberClientDto expect = MemberClientDto.builder()
+        MemberDto expect = MemberDto.builder()
                 .address("서울 강남")
                 .authorities(Arrays.asList("MEMBER"))
                 .email(email)

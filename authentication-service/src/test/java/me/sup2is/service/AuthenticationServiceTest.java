@@ -1,7 +1,7 @@
 package me.sup2is.service;
 
 import me.sup2is.client.MemberServiceClient;
-import me.sup2is.client.dto.MemberClientDto;
+import me.sup2is.client.dto.MemberDto;
 import me.sup2is.web.JsonResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,7 +35,7 @@ class AuthenticationServiceTest {
         String password = "qwer!23";
         String email = "test@exmaple.com";
 
-        MemberClientDto expect = MemberClientDto.builder()
+        MemberDto expect = MemberDto.builder()
                 .address("서울 강남")
                 .authorities(Arrays.asList("MEMBER"))
                 .email(email)
@@ -46,16 +46,14 @@ class AuthenticationServiceTest {
                 .zipCode(12345)
                 .build();
 
-        JsonResult<MemberClientDto> jsonResult = new JsonResult<>(expect);
-
         Mockito.when(memberServiceClient.getMember(email))
-                .thenReturn(jsonResult);
+                .thenReturn(expect);
         Mockito.when(passwordEncoder.matches(password, expect.getPassword()))
                 .thenReturn(true);
 
         //then
-        MemberClientDto memberClientDto = authenticationService.authenticateByEmailAndPassword(email, password);
-        assertEquals(expect.toString(), memberClientDto.toString());
+        MemberDto memberDto = authenticationService.authenticateByEmailAndPassword(email, password);
+        assertEquals(expect.toString(), memberDto.toString());
 
     }
 

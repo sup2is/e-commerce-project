@@ -2,7 +2,7 @@ package me.sup2is.service;
 
 import lombok.RequiredArgsConstructor;
 import me.sup2is.client.MemberServiceClient;
-import me.sup2is.client.dto.MemberClientDto;
+import me.sup2is.client.dto.MemberDto;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,12 +14,12 @@ public class AuthenticationService {
     private final MemberServiceClient memberServiceClient;
     private final PasswordEncoder passwordEncoder;
 
-    public MemberClientDto authenticateByEmailAndPassword(String email, String password) {
-        MemberClientDto memberClientDto = memberServiceClient.getMember(email).getData();
-        if(!passwordEncoder.matches(password, memberClientDto.getPassword())) {
+    public MemberDto authenticateByEmailAndPassword(String email, String password) {
+        MemberDto memberDto = memberServiceClient.getMember(email);
+        if(!passwordEncoder.matches(password, memberDto.getPassword())) {
             throw new BadCredentialsException("Password not matched");
         }
-        return memberClientDto;
+        return memberDto;
     }
 
 }

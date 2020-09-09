@@ -11,7 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
-public class MemberClientDto {
+public class MemberDto {
+
+    private Long memberId;
 
     private String email;
 

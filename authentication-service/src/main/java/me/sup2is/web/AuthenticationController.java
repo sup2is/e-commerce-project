@@ -1,7 +1,7 @@
 package me.sup2is.web;
 
 import lombok.RequiredArgsConstructor;
-import me.sup2is.client.dto.MemberClientDto;
+import me.sup2is.client.dto.MemberDto;
 import me.sup2is.dto.AuthenticationRequestDto;
 import me.sup2is.dto.AuthenticationResponseDto;
 import me.sup2is.jwt.JwtTokenType;
@@ -22,12 +22,12 @@ public class AuthenticationController {
     @PostMapping("/token")
     public ResponseEntity<JsonResult<AuthenticationResponseDto>> generateJwtToken
             (@RequestBody AuthenticationRequestDto authenticationRequestDto) {
-        MemberClientDto memberClientDto = authenticationService.authenticateByEmailAndPassword(
+        MemberDto memberDto = authenticationService.authenticateByEmailAndPassword(
                 authenticationRequestDto.getUsername()
                 , authenticationRequestDto.getPassword());
         AuthenticationResponseDto authenticationFromTokens = AuthenticationResponseDto.createAuthenticationFromTokens(
-                jwtTokenUtil.generateToken(memberClientDto.getEmail(), JwtTokenType.AUTH),
-                jwtTokenUtil.generateToken(memberClientDto.getEmail(), JwtTokenType.REFRESH));
+                jwtTokenUtil.generateToken(memberDto.getEmail(), JwtTokenType.AUTH),
+                jwtTokenUtil.generateToken(memberDto.getEmail(), JwtTokenType.REFRESH));
         return ResponseEntity.ok(new JsonResult<>(authenticationFromTokens));
     }
 }

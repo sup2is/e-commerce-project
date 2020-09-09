@@ -46,8 +46,12 @@ public class OrderController {
     }
 
     @PostMapping("{orderId}/cancel")
-    public ResponseEntity<JsonResult<?>> cancel(@PathVariable Long orderId) throws CancelFailureException, OrderNotFoundException {
-        orderService.cancel(orderId);
+    public ResponseEntity<JsonResult<?>> cancel(@PathVariable Long orderId, HttpServletRequest request)
+            throws CancelFailureException, OrderNotFoundException, IllegalAccessException {
+
+        String email = getEmailByToken(request.getHeader(HttpHeaders.AUTHORIZATION));
+        MemberDto member = memberService.getMember(email);
+        orderService.cancel(orderId, member.getMemberId());
         return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
     }
 

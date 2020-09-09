@@ -41,8 +41,13 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("order is not found"));
     }
 
-    public void cancel(Long orderId) throws CancelFailureException, OrderNotFoundException {
+    public void cancel(Long orderId, Long memberId) throws CancelFailureException, OrderNotFoundException, IllegalAccessException {
         Order order = findOne(orderId);
+
+        if(order.getMemberId().longValue() != memberId.longValue()) {
+            throw new IllegalAccessException("current user is not the owner of this order");
+        }
+
         order.cancel();
         orderItemService.cancelItems(order.getOrderItems());
     }

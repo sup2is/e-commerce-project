@@ -20,13 +20,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContext;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +32,8 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -92,7 +89,7 @@ class OrderControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/")
+        mockMvc.perform(post("/")
                     .content(objectMapper.writeValueAsString(orderRequestDto))
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -127,7 +124,7 @@ class OrderControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/")
+        mockMvc.perform(post("/")
                 .content(objectMapper.writeValueAsString(orderRequestDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -142,7 +139,7 @@ class OrderControllerTest {
         OrderRequestDto orderRequestDto = new OrderRequestDto("test@example.com", new ArrayList<>());
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/")
+        mockMvc.perform(post("/")
                         .content(objectMapper.writeValueAsString(orderRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -156,11 +153,37 @@ class OrderControllerTest {
     @DisplayName("주문 취소")
     public void order_cancel() throws Exception {
         //given
+        String email = "test@example.com";
+        MemberDto memberDto = MemberDto.builder()
+                .address("서울 강남")
+                .name("choi")
+                .password("qwer!23")
+                .phone("010-3132-1089")
+                .zipCode(12345)
+                .enable(true)
+                .authorities(Arrays.asList("MEMBER"))
+                .email(email)
+                .memberId(1L)
+                .build();
+
+        Mockito.when(memberService.getMember(email))
+                .thenReturn(memberDto);
+
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/1/cancel"))
-                .andDo(print())
-                .andExpect(status().is(200));
         //then
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/{orderId}/cancel", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andDo(print())
+                    .andExpect(status().is(200))
+                    .andDo(document("cancel-order",
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                            ),
+                            pathParameters(parameterWithName("orderId").description("주문 번호")))
+                    );
+
 
     }
 }

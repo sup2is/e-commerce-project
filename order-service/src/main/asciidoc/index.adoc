@@ -13,3 +13,9 @@ include::{snippets}/create-order/http-request.adoc[]
 include::{snippets}/create-order/request-headers.adoc[]
 include::{snippets}/create-order/request-fields.adoc[]
 
+== 주문 취소
+
+include::{snippets}/cancel-order/http-request.adoc[]
+include::{snippets}/cancel-order/request-headers.adoc[]
+include::{snippets}/cancel-order/path-parameters.adoc[]
+

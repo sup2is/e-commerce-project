@@ -134,7 +134,7 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 취소")
-    public void cancel() throws OutOfStockException, CancelFailureException, OrderNotFoundException {
+    public void cancel() throws OutOfStockException, CancelFailureException, OrderNotFoundException, IllegalAccessException {
         //given
         OrderItem.Builder itemBuilder = new OrderItem.Builder();
         itemBuilder.productId(1L)
@@ -153,12 +153,37 @@ class OrderServiceTest {
         orderService.order(1L, order);
 
         //when
-        orderService.cancel(order.getId());
+        orderService.cancel(order.getId(), 1L);
 
         //then
         assertEquals(OrderStatus.CANCEL, order.getOrderStatus());
         assertEquals(OrderStatus.CANCEL, order.getOrderItems().get(0).getOrderStatus());
         assertEquals(OrderStatus.CANCEL, order.getOrderItems().get(1).getOrderStatus());
+    }
+
+    @Test
+    @DisplayName("주문 취소요청시 다른유저의 주문에 접근")
+    public void cancel_illegal_access() throws OutOfStockException, CancelFailureException, OrderNotFoundException, IllegalAccessException {
+        //given
+        OrderItem.Builder itemBuilder = new OrderItem.Builder();
+        itemBuilder.productId(1L)
+                .price(10000L)
+                .discountRate(0)
+                .count(2);
+        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
+        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
+
+        Order.Builder orderBuilder = new Order.Builder();
+        List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
+        orderBuilder.orderItems(orderItems)
+                .address("주문하는 주소");
+
+        Order order = Order.createOrder(orderBuilder);
+        orderService.order(1L, order);
+
+        //when
+        //then
+        assertThrows(IllegalAccessException.class, () -> orderService.cancel(order.getId(), 2L));
     }
 
 }

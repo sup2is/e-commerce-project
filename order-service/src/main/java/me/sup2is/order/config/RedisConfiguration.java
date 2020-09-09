@@ -1,7 +1,7 @@
 package me.sup2is.order.config;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import me.sup2is.order.domain.dto.MemberDto;
 import me.sup2is.order.domain.dto.ProductStockDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,6 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -47,6 +46,11 @@ public class RedisConfiguration {
 
     @Bean
     public HashOperations<String, String, ProductStockDto> productStockDtoHashOperations() {
+        return redisTemplate().opsForHash();
+    }
+
+    @Bean
+    public HashOperations<String, String, MemberDto> memberDtoHashOperations() {
         return redisTemplate().opsForHash();
     }
 

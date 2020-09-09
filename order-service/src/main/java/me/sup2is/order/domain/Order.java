@@ -24,6 +24,8 @@ public class Order extends AuditTime{
 
     private Long memberId;
 
+    private String address;
+
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -53,6 +55,10 @@ public class Order extends AuditTime{
         return order;
     }
 
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
     private void setTotalPrice() {
         this.totalPrice = this.orderItems.stream()
                 .map(orderItem -> orderItem.getItemTotalPrice())
@@ -70,24 +76,24 @@ public class Order extends AuditTime{
 
     public static class Builder {
 
-        private Long memberId;
+        private String address;
 
         private List<OrderItem> orderItems;
-
-        public Builder memberId(Long memberId) {
-            this.memberId = memberId;
-            return this;
-        }
 
         public Builder orderItems(List<OrderItem> orderItems) {
             this.orderItems = orderItems;
             return this;
         }
 
+        public Builder address(String address) {
+            this.address = address;
+            return this;
+        }
+
         private Order build() {
             Order order = new Order();
-            order.memberId = this.memberId;
             order.orderItems = this.orderItems;
+            order.address = this.address;
             return order;
         }
     }

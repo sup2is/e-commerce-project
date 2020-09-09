@@ -1,7 +1,5 @@
 package me.sup2is.order.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.nashorn.internal.runtime.options.Option;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.order.client.PaymentModuleClient;
 import me.sup2is.order.client.ProductServiceClient;
@@ -12,11 +10,8 @@ import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
 import me.sup2is.order.domain.dto.ProductStockDto;
 import me.sup2is.order.repository.OrderRepository;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,9 +24,11 @@ public class OrderService {
     private final PaymentModuleClient paymentModuleClient;
     private final ProductServiceClient productServiceClient;
 
-    public void order(Order order) throws OutOfStockException {
+    public void order(Long memberId, Order order) throws OutOfStockException {
         for (OrderItem orderItem : order.getOrderItems())
             cachedProductStockService.checkItemStock(orderItem);
+
+        order.setMemberId(memberId);
 
         paymentModuleClient.payment();
 
@@ -49,5 +46,6 @@ public class OrderService {
         order.cancel();
         orderItemService.cancelItems(order.getOrderItems());
     }
+
 }
 

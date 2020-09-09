@@ -25,7 +25,7 @@ class OrderTest {
         Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
         orderBuilder.orderItems(orderItems)
-                .memberId(10L);
+                .address("주문하는 주소");
 
         //when
         Order order = Order.createOrder(orderBuilder);
@@ -49,7 +49,7 @@ class OrderTest {
         Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
         orderBuilder.orderItems(orderItems)
-                .memberId(10L);
+                .address("주문하는 주소");
 
         //when
         Order order = Order.createOrder(orderBuilder);

@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OrderRequestDto {
 
-    @NotNull
-    private Long memberId;
+    @NotEmpty
+    private String address;
 
     @Valid
     @NotEmpty
@@ -24,7 +24,7 @@ public class OrderRequestDto {
 
     public Order toEntity() {
         Order.Builder builder = new Order.Builder();
-        builder.memberId(memberId);
+        builder.address(address);
         List<OrderItem> items = orderItems.stream()
                 .map(OrderItemRequestDto::toEntity)
                 .collect(Collectors.toList());

@@ -10,5 +10,6 @@
 == 주문
 
 include::{snippets}/create-order/http-request.adoc[]
+include::{snippets}/create-order/request-headers.adoc[]
 include::{snippets}/create-order/request-fields.adoc[]
 

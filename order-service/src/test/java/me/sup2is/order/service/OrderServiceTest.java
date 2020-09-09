@@ -6,7 +6,6 @@ import me.sup2is.order.client.ProductServiceClient;
 import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
 import me.sup2is.order.domain.OrderStatus;
-import me.sup2is.order.domain.dto.ProductStockDto;
 import me.sup2is.order.exception.CancelFailureException;
 import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
@@ -14,8 +13,6 @@ import me.sup2is.order.repository.OrderItemRepository;
 import me.sup2is.order.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,15 +21,12 @@ import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.cloud.openfeign.ribbon.FeignRibbonClientAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static reactor.core.publisher.Mono.when;
 
@@ -80,12 +74,12 @@ class OrderServiceTest {
         Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
         orderBuilder.orderItems(orderItems)
-                .memberId(10L);
+                .address("주문하는 주소");
 
         Order order = Order.createOrder(orderBuilder);
 
         //when
-        orderService.order(order);
+        orderService.order(1L, order);
 
         //then
         Order findOrder = orderRepository.findById(order.getId()).get();
@@ -125,7 +119,7 @@ class OrderServiceTest {
         Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
         orderBuilder.orderItems(orderItems)
-                .memberId(10L);
+                .address("주문하는 주소");
 
         Order order = Order.createOrder(orderBuilder);
 
@@ -135,7 +129,7 @@ class OrderServiceTest {
 
         //when
         //then
-        assertThrows(OutOfStockException.class, () -> orderService.order(order));
+        assertThrows(OutOfStockException.class, () -> orderService.order(1L, order));
     }
 
     @Test
@@ -153,10 +147,10 @@ class OrderServiceTest {
         Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
         orderBuilder.orderItems(orderItems)
-                .memberId(10L);
+                .address("주문하는 주소");
 
         Order order = Order.createOrder(orderBuilder);
-        orderService.order(order);
+        orderService.order(1L, order);
 
         //when
         orderService.cancel(order.getId());

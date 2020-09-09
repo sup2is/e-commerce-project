@@ -1,9 +1,6 @@
 package me.sup2is.client.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -12,9 +9,12 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @ToString
-public class MemberClientDto {
+public class MemberDto {
+
+    private long memberId;
 
     private String email;
 

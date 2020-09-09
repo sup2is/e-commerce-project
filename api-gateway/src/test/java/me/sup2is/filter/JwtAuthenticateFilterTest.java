@@ -1,9 +1,10 @@
-package me.sup2is;
+package me.sup2is.filter;
 
 import me.sup2is.client.MemberServiceClient;
-import me.sup2is.client.dto.MemberClientDto;
+import me.sup2is.client.dto.MemberDto;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
+import me.sup2is.service.MemberService;
 import me.sup2is.web.JsonResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,10 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@Import({JwtTokenUtil.class,
-        RibbonAutoConfiguration.class,
-        FeignRibbonClientAutoConfiguration.class,
-        FeignAutoConfiguration.class})
+@Import({JwtTokenUtil.class})
 class JwtAuthenticateFilterTest {
 
     @Autowired
@@ -37,8 +35,8 @@ class JwtAuthenticateFilterTest {
     @Autowired
     JwtTokenUtil jwtTokenUtil;
 
-    @MockBean(name = "memberServiceClient")
-    MemberServiceClient memberServiceClient;
+    @MockBean
+    MemberService memberService;
 
     @Test
     @DisplayName("정상적인 token을 갖고 있는 사람이 access했을 경우")
@@ -46,7 +44,7 @@ class JwtAuthenticateFilterTest {
         //given
         String email = "choi@example.com";
 
-        MemberClientDto expect = MemberClientDto.builder()
+        MemberDto expect = MemberDto.builder()
                 .address("서울 강남")
                 .authorities(Arrays.asList("MEMBER"))
                 .email(email)
@@ -57,10 +55,8 @@ class JwtAuthenticateFilterTest {
                 .zipCode(12345)
                 .build();
 
-        JsonResult<MemberClientDto> result = new JsonResult<>(expect);
-
         String accessToken = jwtTokenUtil.generateToken("choi@example.com", JwtTokenType.AUTH);
-        Mockito.when(memberServiceClient.getMember(email)).thenReturn(result);
+        Mockito.when(memberService.getMember(email)).thenReturn(expect);
 
         //when & then
         mockMvc.perform(get("/api/")

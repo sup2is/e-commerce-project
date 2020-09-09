@@ -3,6 +3,7 @@ package me.sup2is.filter;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.client.MemberServiceClient;
 import me.sup2is.jwt.JwtTokenUtil;
+import me.sup2is.service.MemberService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,23 +25,23 @@ import java.util.List;
 public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final MemberServiceClient memberServiceClient;
+    private final MemberService memberService;
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final List<String> EXCLUDE_URL =
             Arrays.asList("/auth/token", "/api/member");
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = extractTokenFromHeader((httpServletRequest).getHeader(HttpHeaders.AUTHORIZATION));
-        String email = extractIdFromToken(accessToken);
+        String accessToken = extractTokenFromHeader(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION));
+        String email = extractEmailFromToken(accessToken);
 
-        if(email != null
-            && SecurityContextHolder.getContext().getAuthentication() == null
-                && jwtTokenUtil.validateToken(accessToken)){
+        if(checkCurrentSecurityContext(email)) {
+            SecurityContextHolder.clearContext();
+        }
 
-            User user = memberServiceClient.getMember(email).getData().toUser();
+        if(validate(accessToken, email)){
+            User user = memberService.getMember(email).toUser();
             UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(user, accessToken, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -49,7 +50,25 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
-    private String extractIdFromToken(String token) {
+    private boolean checkCurrentSecurityContext(String email) {
+        return SecurityContextHolder.getContext().getAuthentication() != null
+                && !getPrincipal().getUsername().equals(email);
+    }
+
+    private User getPrincipal() {
+        return (User) SecurityContextHolder
+            .getContext()
+            .getAuthentication()
+            .getPrincipal();
+    }
+
+    private boolean validate(String accessToken, String email) {
+        return email != null
+            && SecurityContextHolder.getContext().getAuthentication() == null
+            && jwtTokenUtil.validateToken(accessToken);
+    }
+
+    private String extractEmailFromToken(String token) {
         String username;
         try {
             username = jwtTokenUtil.getIdFromToken(token);

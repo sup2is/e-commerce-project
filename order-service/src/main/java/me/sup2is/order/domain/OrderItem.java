@@ -53,6 +53,10 @@ public class OrderItem extends AuditTime {
         this.orderStatus = OrderStatus.CANCEL;
     }
 
+    public void modify(Integer count) {
+        this.count = count;
+    }
+
     public static class Builder {
 
         private Long productId;

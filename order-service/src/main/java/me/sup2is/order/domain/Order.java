@@ -74,6 +74,10 @@ public class Order extends AuditTime{
         throw new CancelFailureException(this.getId() + " is already " + this.orderStatus);
     }
 
+    public void updateAddress(String newAddress) {
+        this.address = newAddress;
+    }
+
     public static class Builder {
 
         private String address;

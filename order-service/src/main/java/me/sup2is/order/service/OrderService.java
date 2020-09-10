@@ -3,6 +3,7 @@ package me.sup2is.order.service;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.order.client.PaymentModuleClient;
 import me.sup2is.order.client.ProductServiceClient;
+import me.sup2is.order.domain.dto.ModifyOrderItem;
 import me.sup2is.order.exception.CancelFailureException;
 import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
@@ -12,6 +13,8 @@ import me.sup2is.order.domain.dto.ProductStockDto;
 import me.sup2is.order.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -50,6 +53,29 @@ public class OrderService {
 
         order.cancel();
         orderItemService.cancelItems(order.getOrderItems());
+    }
+
+    public void modify(Long memberId, Long orderId, String newAddress, List<ModifyOrderItem> modifyOrderItems)
+            throws OrderNotFoundException, IllegalAccessException, OutOfStockException {
+
+        Order order = findOne(orderId);
+
+        if(order.getMemberId().longValue() != memberId.longValue()) {
+            throw new IllegalAccessException("current user is not the owner of this order");
+        }
+
+        for (ModifyOrderItem modifyOrderItem : modifyOrderItems)
+            cachedProductStockService.checkItemStock(modifyOrderItem);
+
+        order.updateAddress(newAddress);
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            for (ModifyOrderItem modifyOrderItem : modifyOrderItems) {
+                if(orderItem.getProductId().longValue() == modifyOrderItem.getProductId().longValue()) {
+                    orderItem.modify(modifyOrderItem.getCount());
+                }
+            }
+        }
     }
 
 }

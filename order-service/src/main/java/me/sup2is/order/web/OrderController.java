@@ -3,6 +3,8 @@ package me.sup2is.order.web;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.order.domain.dto.MemberDto;
+import me.sup2is.order.domain.dto.ModifyOrderItemRequestDto;
+import me.sup2is.order.domain.dto.ModifyOrderRequestDto;
 import me.sup2is.order.domain.dto.OrderRequestDto;
 import me.sup2is.order.exception.CancelFailureException;
 import me.sup2is.order.exception.OrderNotFoundException;
@@ -15,13 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,6 +52,23 @@ public class OrderController {
         String email = getEmailByToken(request.getHeader(HttpHeaders.AUTHORIZATION));
         MemberDto member = memberService.getMember(email);
         orderService.cancel(orderId, member.getMemberId());
+        return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
+    }
+
+    @PutMapping("{orderId}")
+    public ResponseEntity<JsonResult<?>> modify(@PathVariable Long orderId,
+                                                @RequestBody ModifyOrderRequestDto modifyOrderRequestDto,
+                                                HttpServletRequest request)
+            throws OrderNotFoundException, IllegalAccessException, OutOfStockException {
+
+        String email = getEmailByToken(request.getHeader(HttpHeaders.AUTHORIZATION));
+        MemberDto member = memberService.getMember(email);
+
+        orderService.modify(member.getMemberId(),
+                orderId,
+                modifyOrderRequestDto.getAddress(),
+                ModifyOrderItemRequestDto.toModifyOrderItems(modifyOrderRequestDto.getModifyOrderItems()));
+
         return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
     }
 

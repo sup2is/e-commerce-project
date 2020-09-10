@@ -19,3 +19,10 @@ include::{snippets}/cancel-order/http-request.adoc[]
 include::{snippets}/cancel-order/request-headers.adoc[]
 include::{snippets}/cancel-order/path-parameters.adoc[]
 
+== 주문 수정
+
+include::{snippets}/modify-order/http-request.adoc[]
+include::{snippets}/modify-order/request-headers.adoc[]
+include::{snippets}/modify-order/path-parameters.adoc[]
+include::{snippets}/modify-order/request-fields.adoc[]
+

@@ -6,6 +6,7 @@ import me.sup2is.order.client.ProductServiceClient;
 import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
 import me.sup2is.order.domain.OrderStatus;
+import me.sup2is.order.domain.dto.ModifyOrderItem;
 import me.sup2is.order.exception.CancelFailureException;
 import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
@@ -184,6 +185,48 @@ class OrderServiceTest {
         //when
         //then
         assertThrows(IllegalAccessException.class, () -> orderService.cancel(order.getId(), 2L));
+    }
+
+
+    @Test
+    @DisplayName("주문 수문 수정")
+    public void modify() throws OutOfStockException, OrderNotFoundException, IllegalAccessException {
+        //given
+        OrderItem.Builder itemBuilder = new OrderItem.Builder();
+        itemBuilder.productId(1L)
+                .price(10000L)
+                .discountRate(0)
+                .count(2);
+
+        OrderItem.Builder itemBuilder2 = new OrderItem.Builder();
+        itemBuilder2.productId(22L)
+                .price(50000L)
+                .discountRate(0)
+                .count(1);
+
+        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
+        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
+
+        Order.Builder orderBuilder = new Order.Builder();
+        List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
+        orderBuilder.orderItems(orderItems)
+                .address("주문하는 주소");
+
+        Order order = Order.createOrder(orderBuilder);
+        orderService.order(1L, order);
+
+        ModifyOrderItem modifyOrderItem = new ModifyOrderItem(1L, 5);
+
+        //when
+        String newAddress = "변경된 주소";
+        orderService.modify(1L, order.getId(), newAddress, Arrays.asList(modifyOrderItem));
+
+        //then
+        Order findOrder = orderService.findOne(order.getId());
+
+        assertEquals(newAddress, findOrder.getAddress());
+        assertEquals(5, findOrder.getOrderItems().get(0).getCount());
+
     }
 
 }

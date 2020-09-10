@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.order.config.RestDocsConfiguration;
-import me.sup2is.order.domain.dto.MemberDto;
-import me.sup2is.order.domain.dto.OrderItemRequestDto;
-import me.sup2is.order.domain.dto.OrderRequestDto;
+import me.sup2is.order.domain.dto.*;
 import me.sup2is.order.service.MemberService;
 import me.sup2is.order.service.OrderService;
 import org.junit.jupiter.api.DisplayName;
@@ -182,6 +180,58 @@ class OrderControllerTest {
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
                             ),
                             pathParameters(parameterWithName("orderId").description("주문 번호")))
+                    );
+
+
+    }
+
+    @Test
+    @DisplayName("주문 수정")
+    public void modify_order() throws Exception {
+        //given
+        String email = "test@example.com";
+        MemberDto memberDto = MemberDto.builder()
+                .address("서울 강남")
+                .name("choi")
+                .password("qwer!23")
+                .phone("010-3132-1089")
+                .zipCode(12345)
+                .enable(true)
+                .authorities(Arrays.asList("MEMBER"))
+                .email(email)
+                .memberId(1L)
+                .build();
+
+        Mockito.when(memberService.getMember(email))
+                .thenReturn(memberDto);
+
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
+        ModifyOrderRequestDto modifyOrderRequestDto =
+                new ModifyOrderRequestDto("변경될 주소",
+                Arrays.asList(new ModifyOrderItemRequestDto(1L, 5, 0)));
+
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/{orderId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(modifyOrderRequestDto)))
+                    .andDo(print())
+                    .andExpect(status().is(200))
+                    .andDo(document("modify-order",
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                            ),
+                            pathParameters(parameterWithName("orderId").description("주문 번호")),
+                            requestFields(
+                                    fieldWithPath("address").description("변경 될 주소"),
+                                    fieldWithPath("modifyOrderItems").description("변경할 아이템 리스트"),
+                                    fieldWithPath("modifyOrderItems[].productId").description("변경할 상품의 고유번호"),
+                                    fieldWithPath("modifyOrderItems[].count").description("변경 될 상품의 개수"),
+                                    fieldWithPath("modifyOrderItems[].discountRate").description("변경 될 상품의 할인율 (미구현)"))
+                            )
                     );
 
 

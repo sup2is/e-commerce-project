@@ -2,10 +2,8 @@ package me.sup2is.order.web;
 
 import lombok.RequiredArgsConstructor;
 import me.sup2is.jwt.JwtTokenUtil;
-import me.sup2is.order.domain.dto.MemberDto;
-import me.sup2is.order.domain.dto.ModifyOrderItemRequestDto;
-import me.sup2is.order.domain.dto.ModifyOrderRequestDto;
-import me.sup2is.order.domain.dto.OrderRequestDto;
+import me.sup2is.order.domain.Order;
+import me.sup2is.order.domain.dto.*;
 import me.sup2is.order.exception.CancelFailureException;
 import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -70,6 +67,14 @@ public class OrderController {
                 ModifyOrderItemRequestDto.toModifyOrderItems(modifyOrderRequestDto.getModifyOrderItems()));
 
         return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
+    }
+
+    @GetMapping("{orderId}")
+    public ResponseEntity<JsonResult<?>> getOrder(@PathVariable Long orderId)
+            throws OrderNotFoundException {
+
+        Order findOrder = orderService.findOne(orderId);
+        return ResponseEntity.ok(new JsonResult<>(new OrderResponseDto(findOrder)));
     }
 
     private String getEmailByToken(String header) {

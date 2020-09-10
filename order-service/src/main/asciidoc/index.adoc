@@ -26,3 +26,12 @@ include::{snippets}/modify-order/request-headers.adoc[]
 include::{snippets}/modify-order/path-parameters.adoc[]
 include::{snippets}/modify-order/request-fields.adoc[]
 
+== 주문 조회 (1개)
+
+include::{snippets}/get-order/http-request.adoc[]
+include::{snippets}/get-order/request-headers.adoc[]
+include::{snippets}/get-order/path-parameters.adoc[]
+include::{snippets}/get-order/http-response.adoc[]
+include::{snippets}/get-order/response-fields.adoc[]
+
+

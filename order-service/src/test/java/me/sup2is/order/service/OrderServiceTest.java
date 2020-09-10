@@ -29,7 +29,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
-import static reactor.core.publisher.Mono.when;
 
 @DataJpaTest
 @Import({OrderService.class,

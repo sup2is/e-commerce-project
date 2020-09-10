@@ -4,9 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.order.config.RestDocsConfiguration;
+import me.sup2is.order.domain.Order;
+import me.sup2is.order.domain.OrderItem;
+import me.sup2is.order.domain.OrderStatus;
 import me.sup2is.order.domain.dto.*;
+import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.service.MemberService;
 import me.sup2is.order.service.OrderService;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -235,5 +240,73 @@ class OrderControllerTest {
                     );
 
 
+    }
+
+    @Test
+    @DisplayName("주문 조회 (1개)")
+    public void get_order() throws Exception, OrderNotFoundException {
+        //given
+        String email = "test@example.com";
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
+        OrderItem.Builder itemBuilder = new OrderItem.Builder();
+        itemBuilder.productId(1L)
+                .price(10000L)
+                .discountRate(0)
+                .count(2);
+
+        OrderItem.Builder itemBuilder2 = new OrderItem.Builder();
+        itemBuilder2.productId(22L)
+                .price(50000L)
+                .discountRate(0)
+                .count(1);
+
+        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
+        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
+
+
+        List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
+
+        Order.Builder orderBuilder = new Order.Builder();
+        orderBuilder.orderItems(orderItems)
+                .address("주문하는 주소");
+        Order order = Order.createOrder(orderBuilder);
+
+        FieldUtils.writeField(order, "memberId", 1L, true);
+
+        Mockito.when(orderService.findOne(1L))
+                .thenReturn(order);
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/{orderId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andDo(print())
+                    .andExpect(status().is(200))
+                    .andDo(document("get-order",
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                            ),
+                            pathParameters(
+                                    parameterWithName("orderId").description("주문 번호")
+                            ),
+                            responseFields(
+                                    fieldWithPath("result").description("API 요청 결과 SUCCESS / FAIL"),
+                                    fieldWithPath("messages").description("API 요청 메시지"),
+                                    fieldWithPath("error").description("API 요청 에러"),
+                                    fieldWithPath("fieldErrors").description("API form validation 에러"),
+                                    fieldWithPath("data").description("API 요청 데이터"),
+                                    fieldWithPath("data.memberId").description("주문 회원 번호"),
+                                    fieldWithPath("data.address").description("주문 주소"),
+                                    fieldWithPath("data.totalPrice").description("주문 총 금액"),
+                                    fieldWithPath("data.orderStatus").description("주문 상태"),
+                                    fieldWithPath("data.orderItems").description("상품"),
+                                    fieldWithPath("data.orderItems[].productId").description("상품 번호"),
+                                    fieldWithPath("data.orderItems[].price").description("상품 금액"),
+                                    fieldWithPath("data.orderItems[].count").description("상품 주문 개수"),
+                                    fieldWithPath("data.orderItems[].discountRate").description("할인율"),
+                                    fieldWithPath("data.orderItems[].orderStatus").description("주문 개별 상태"))
+                            )
+                    );
     }
 }

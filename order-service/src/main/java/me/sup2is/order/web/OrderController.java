@@ -9,6 +9,7 @@ import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
 import me.sup2is.order.service.MemberService;
 import me.sup2is.order.service.OrderService;
+import me.sup2is.order.web.dto.*;
 import me.sup2is.web.JsonResult;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
@@ -86,7 +87,7 @@ public class OrderController {
 
         String email = getEmailByToken(request.getHeader(HttpHeaders.AUTHORIZATION));
         MemberDto member = memberService.getMember(email);
-        PageRequest orderPageRequest = OrderPageRequest.createOrderPageRequest(pageNo, pageSize);
+        PageRequest orderPageRequest = OrderPageRequestDto.createOrderPageRequest(pageNo, pageSize);
         List<Order> findOrders = orderService.findAll(orderPageRequest, member.getMemberId());
         List<OrderResponseDto> orders = OrderResponseDto.createResponseDto(findOrders);
         return ResponseEntity.ok(new JsonResult<>(orders));

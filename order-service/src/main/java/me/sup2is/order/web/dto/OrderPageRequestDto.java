@@ -1,11 +1,11 @@
-package me.sup2is.order.domain.dto;
+package me.sup2is.order.web.dto;
 
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 @NoArgsConstructor
-public class OrderPageRequest {
+public class OrderPageRequestDto {
 
     private static final int MAX_PAGE_SIZE = 10;
 

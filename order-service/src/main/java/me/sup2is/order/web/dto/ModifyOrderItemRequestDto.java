@@ -1,7 +1,8 @@
-package me.sup2is.order.domain.dto;
+package me.sup2is.order.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.sup2is.order.domain.dto.ModifyOrderItem;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;

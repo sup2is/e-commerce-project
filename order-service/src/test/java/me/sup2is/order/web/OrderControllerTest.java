@@ -10,6 +10,7 @@ import me.sup2is.order.domain.dto.*;
 import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.service.MemberService;
 import me.sup2is.order.service.OrderService;
+import me.sup2is.order.web.dto.*;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -344,7 +345,7 @@ class OrderControllerTest {
         FieldUtils.writeField(order2, "memberId", 1L, true);
 
 
-        PageRequest orderPageRequest = OrderPageRequest.createOrderPageRequest(0, 5);
+        PageRequest orderPageRequest = OrderPageRequestDto.createOrderPageRequest(0, 5);
 
         Mockito.when(orderService.findAll(orderPageRequest, 1L))
                 .thenReturn(Arrays.asList(order, order2));

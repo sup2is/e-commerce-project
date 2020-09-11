@@ -2,7 +2,7 @@ package me.sup2is.order.repository;
 
 import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
-import me.sup2is.order.domain.dto.OrderPageRequest;
+import me.sup2is.order.web.dto.OrderPageRequestDto;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @EnableJpaAuditing
-@Import(OrderPageRequest.class)
+@Import(OrderPageRequestDto.class)
 class OrderRepositoryTest {
 
     @Autowired
@@ -55,7 +55,7 @@ class OrderRepositoryTest {
         orderRepository.saveAndFlush(order);
         orderRepository.saveAndFlush(order2);
 
-        PageRequest orderPageRequest = OrderPageRequest.createOrderPageRequest(0, 5);
+        PageRequest orderPageRequest = OrderPageRequestDto.createOrderPageRequest(0, 5);
 
         //when
         List<Order> orders = orderRepository.findByMemberId(1L, orderPageRequest);

@@ -63,11 +63,7 @@ class OrderServiceTest {
     @DisplayName("정상적인 order와 orderItems의 save")
     public void save() throws OutOfStockException {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
-                .price(10000L)
-                .discountRate(0)
-                .count(2);
+        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
@@ -108,11 +104,7 @@ class OrderServiceTest {
     public void reject_save() throws OutOfStockException {
         //given
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
-                .price(10000L)
-                .discountRate(0)
-                .count(2);
+        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
@@ -136,11 +128,7 @@ class OrderServiceTest {
     @DisplayName("주문 취소")
     public void cancel() throws OutOfStockException, CancelFailureException, OrderNotFoundException, IllegalAccessException {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
-                .price(10000L)
-                .discountRate(0)
-                .count(2);
+        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
@@ -163,13 +151,9 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 취소요청시 다른유저의 주문에 접근")
-    public void cancel_illegal_access() throws OutOfStockException, CancelFailureException, OrderNotFoundException, IllegalAccessException {
+    public void cancel_illegal_access() throws OutOfStockException {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
-                .price(10000L)
-                .discountRate(0)
-                .count(2);
+        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
@@ -191,17 +175,9 @@ class OrderServiceTest {
     @DisplayName("주문 수문 수정")
     public void modify() throws OutOfStockException, OrderNotFoundException, IllegalAccessException {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
-                .price(10000L)
-                .discountRate(0)
-                .count(2);
+        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
 
-        OrderItem.Builder itemBuilder2 = new OrderItem.Builder();
-        itemBuilder2.productId(22L)
-                .price(50000L)
-                .discountRate(0)
-                .count(1);
+        OrderItem.Builder itemBuilder2 = getBuilder(22L, 50000L, 1);
 
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
@@ -226,6 +202,15 @@ class OrderServiceTest {
         assertEquals(newAddress, findOrder.getAddress());
         assertEquals(5, findOrder.getOrderItems().get(0).getCount());
 
+    }
+
+    private OrderItem.Builder getBuilder(long productId, long price, int count) {
+        OrderItem.Builder itemBuilder = new OrderItem.Builder();
+        itemBuilder.productId(productId)
+                .price(price)
+                .discountRate(0)
+                .count(count);
+        return itemBuilder;
     }
 
 

@@ -74,17 +74,7 @@ class OrderControllerTest {
         OrderRequestDto orderRequestDto = new OrderRequestDto("주문 받는 주소", orderItemRequestDto);
 
         String email = "test@example.com";
-        MemberDto memberDto = MemberDto.builder()
-                .address("서울 강남")
-                .name("choi")
-                .password("qwer!23")
-                .phone("010-3132-1089")
-                .zipCode(12345)
-                .enable(true)
-                .authorities(Arrays.asList("MEMBER"))
-                .email(email)
-                .memberId(1L)
-                .build();
+        MemberDto memberDto = getMemberDto(email);
 
         Mockito.when(memberService.getMember(email))
                 .thenReturn(memberDto);
@@ -158,17 +148,7 @@ class OrderControllerTest {
     public void order_cancel() throws Exception {
         //given
         String email = "test@example.com";
-        MemberDto memberDto = MemberDto.builder()
-                .address("서울 강남")
-                .name("choi")
-                .password("qwer!23")
-                .phone("010-3132-1089")
-                .zipCode(12345)
-                .enable(true)
-                .authorities(Arrays.asList("MEMBER"))
-                .email(email)
-                .memberId(1L)
-                .build();
+        MemberDto memberDto = getMemberDto(email);
 
         Mockito.when(memberService.getMember(email))
                 .thenReturn(memberDto);
@@ -196,17 +176,7 @@ class OrderControllerTest {
     public void modify_order() throws Exception {
         //given
         String email = "test@example.com";
-        MemberDto memberDto = MemberDto.builder()
-                .address("서울 강남")
-                .name("choi")
-                .password("qwer!23")
-                .phone("010-3132-1089")
-                .zipCode(12345)
-                .enable(true)
-                .authorities(Arrays.asList("MEMBER"))
-                .email(email)
-                .memberId(1L)
-                .build();
+        MemberDto memberDto = getMemberDto(email);
 
         Mockito.when(memberService.getMember(email))
                 .thenReturn(memberDto);
@@ -250,17 +220,9 @@ class OrderControllerTest {
         String email = "test@example.com";
         String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
 
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
-                .price(10000L)
-                .discountRate(0)
-                .count(2);
+        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
 
-        OrderItem.Builder itemBuilder2 = new OrderItem.Builder();
-        itemBuilder2.productId(22L)
-                .price(50000L)
-                .discountRate(0)
-                .count(1);
+        OrderItem.Builder itemBuilder2 = getBuilder(22L, 50000L, 1);
 
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
@@ -318,17 +280,8 @@ class OrderControllerTest {
         String email = "test@example.com";
         String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
 
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
-                .price(10000L)
-                .discountRate(0)
-                .count(2);
-
-        OrderItem.Builder itemBuilder2 = new OrderItem.Builder();
-        itemBuilder2.productId(22L)
-                .price(50000L)
-                .discountRate(0)
-                .count(1);
+        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
+        OrderItem.Builder itemBuilder2 = getBuilder(22L, 50000L, 1);
 
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
@@ -350,17 +303,7 @@ class OrderControllerTest {
         Mockito.when(orderService.findAll(orderPageRequest, 1L))
                 .thenReturn(Arrays.asList(order, order2));
 
-        MemberDto memberDto = MemberDto.builder()
-                .address("서울 강남")
-                .name("choi")
-                .password("qwer!23")
-                .phone("010-3132-1089")
-                .zipCode(12345)
-                .enable(true)
-                .authorities(Arrays.asList("MEMBER"))
-                .email(email)
-                .memberId(1L)
-                .build();
+        MemberDto memberDto = getMemberDto(email);
 
         Mockito.when(memberService.getMember(email))
                 .thenReturn(memberDto);
@@ -399,6 +342,29 @@ class OrderControllerTest {
                                     fieldWithPath("data[].orderItems[].orderStatus").description("주문 개별 상태"))
                             )
                     );
+    }
+
+    private OrderItem.Builder getBuilder(long productId, long price, int count) {
+        OrderItem.Builder itemBuilder = new OrderItem.Builder();
+        itemBuilder.productId(productId)
+                .price(price)
+                .discountRate(0)
+                .count(count);
+        return itemBuilder;
+    }
+
+    private MemberDto getMemberDto(String email) {
+        return MemberDto.builder()
+                .address("서울 강남")
+                .name("choi")
+                .password("qwer!23")
+                .phone("010-3132-1089")
+                .zipCode(12345)
+                .enable(true)
+                .authorities(Arrays.asList("MEMBER"))
+                .email(email)
+                .memberId(1L)
+                .build();
     }
 }
 

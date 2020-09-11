@@ -6,7 +6,6 @@ import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.order.config.RestDocsConfiguration;
 import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
-import me.sup2is.order.domain.OrderStatus;
 import me.sup2is.order.domain.dto.*;
 import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.service.MemberService;

@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -309,4 +310,95 @@ class OrderControllerTest {
                             )
                     );
     }
+
+    @Test
+    @DisplayName("주문 조회 (n개)")
+    public void get_orders() throws Exception, OrderNotFoundException {
+        //given
+        String email = "test@example.com";
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
+        OrderItem.Builder itemBuilder = new OrderItem.Builder();
+        itemBuilder.productId(1L)
+                .price(10000L)
+                .discountRate(0)
+                .count(2);
+
+        OrderItem.Builder itemBuilder2 = new OrderItem.Builder();
+        itemBuilder2.productId(22L)
+                .price(50000L)
+                .discountRate(0)
+                .count(1);
+
+        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
+        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
+
+        List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
+
+        Order.Builder orderBuilder = new Order.Builder();
+        orderBuilder.orderItems(orderItems)
+                .address("주문하는 주소");
+        Order order = Order.createOrder(orderBuilder);
+        Order order2 = Order.createOrder(orderBuilder);
+
+        FieldUtils.writeField(order, "memberId", 1L, true);
+        FieldUtils.writeField(order2, "memberId", 1L, true);
+
+
+        PageRequest orderPageRequest = OrderPageRequest.createOrderPageRequest(0, 5);
+
+        Mockito.when(orderService.findAll(orderPageRequest, 1L))
+                .thenReturn(Arrays.asList(order, order2));
+
+        MemberDto memberDto = MemberDto.builder()
+                .address("서울 강남")
+                .name("choi")
+                .password("qwer!23")
+                .phone("010-3132-1089")
+                .zipCode(12345)
+                .enable(true)
+                .authorities(Arrays.asList("MEMBER"))
+                .email(email)
+                .memberId(1L)
+                .build();
+
+        Mockito.when(memberService.getMember(email))
+                .thenReturn(memberDto);
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .param("pageNo", "0")
+                        .param("pageSize", "5"))
+                    .andDo(print())
+                    .andExpect(status().is(200))
+                    .andDo(document("get-orders",
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                            ),
+                            requestParameters(
+                                    parameterWithName("pageNo").description("페이지 번호"),
+                                    parameterWithName("pageSize").description("페이지 사이즈")
+                            ),
+                            responseFields(
+                                    fieldWithPath("result").description("API 요청 결과 SUCCESS / FAIL"),
+                                    fieldWithPath("messages").description("API 요청 메시지"),
+                                    fieldWithPath("error").description("API 요청 에러"),
+                                    fieldWithPath("fieldErrors").description("API form validation 에러"),
+                                    fieldWithPath("data[]").description("API 요청 데이터"),
+                                    fieldWithPath("data[].memberId").description("주문 회원 번호"),
+                                    fieldWithPath("data[].address").description("주문 주소"),
+                                    fieldWithPath("data[].totalPrice").description("주문 총 금액"),
+                                    fieldWithPath("data[].orderStatus").description("주문 상태"),
+                                    fieldWithPath("data[].orderItems").description("상품"),
+                                    fieldWithPath("data[].orderItems[].productId").description("상품 번호"),
+                                    fieldWithPath("data[].orderItems[].price").description("상품 금액"),
+                                    fieldWithPath("data[].orderItems[].count").description("상품 주문 개수"),
+                                    fieldWithPath("data[].orderItems[].discountRate").description("할인율"),
+                                    fieldWithPath("data[].orderItems[].orderStatus").description("주문 개별 상태"))
+                            )
+                    );
+    }
 }
+

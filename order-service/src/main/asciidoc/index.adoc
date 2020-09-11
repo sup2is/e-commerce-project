@@ -35,3 +35,12 @@ include::{snippets}/get-order/http-response.adoc[]
 include::{snippets}/get-order/response-fields.adoc[]
 
 
+== 주문 조회 (n개)
+
+include::{snippets}/get-orders/http-request.adoc[]
+include::{snippets}/get-orders/request-headers.adoc[]
+include::{snippets}/get-orders/request-parameters.adoc[]
+include::{snippets}/get-orders/http-response.adoc[]
+include::{snippets}/get-orders/response-fields.adoc[]
+
+

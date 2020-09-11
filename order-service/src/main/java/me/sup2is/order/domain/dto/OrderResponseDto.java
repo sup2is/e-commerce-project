@@ -30,4 +30,10 @@ public class OrderResponseDto {
                 .map(OrderItemResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    public static List<OrderResponseDto> createResponseDto(List<Order> content) {
+        return content.stream()
+                .map(OrderResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }

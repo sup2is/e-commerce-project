@@ -10,6 +10,8 @@ import me.sup2is.order.exception.OutOfStockException;
 import me.sup2is.order.service.MemberService;
 import me.sup2is.order.service.OrderService;
 import me.sup2is.web.JsonResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -75,6 +78,19 @@ public class OrderController {
 
         Order findOrder = orderService.findOne(orderId);
         return ResponseEntity.ok(new JsonResult<>(new OrderResponseDto(findOrder)));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<JsonResult<?>> getOrders(@RequestParam(defaultValue = "0") int pageNo,
+                                                   @RequestParam(defaultValue = "5") int pageSize,
+                                                   HttpServletRequest request) {
+
+        String email = getEmailByToken(request.getHeader(HttpHeaders.AUTHORIZATION));
+        MemberDto member = memberService.getMember(email);
+        PageRequest orderPageRequest = OrderPageRequest.createOrderPageRequest(pageNo, pageSize);
+        List<Order> findOrders = orderService.findAll(orderPageRequest, member.getMemberId());
+        List<OrderResponseDto> orders = OrderResponseDto.createResponseDto(findOrders);
+        return ResponseEntity.ok(new JsonResult<>(orders));
     }
 
     private String getEmailByToken(String header) {

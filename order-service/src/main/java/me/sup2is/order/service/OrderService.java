@@ -11,6 +11,8 @@ import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
 import me.sup2is.order.domain.dto.ProductStockDto;
 import me.sup2is.order.repository.OrderRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,5 +80,8 @@ public class OrderService {
         }
     }
 
+    public List<Order> findAll(PageRequest orderPageRequest, Long memberId) {
+        return orderRepository.findByMemberId(memberId, orderPageRequest);
+    }
 }
 

@@ -3,6 +3,7 @@ package me.sup2is.product.web;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.product.domain.dto.MemberDto;
+import me.sup2is.product.domain.dto.ProductModifyRequestDto;
 import me.sup2is.product.domain.dto.ProductRequestDto;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.service.MemberService;
@@ -45,6 +46,21 @@ public class ProductController {
     @PutMapping("/stock")
     public ResponseEntity<JsonResult<?>> modifyStock(@RequestBody List<ProductStockDto> productStockDto) {
         productService.modifyStock(productStockDto);
+        return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
+    }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<JsonResult<?>> modify(@Valid @RequestBody ProductModifyRequestDto productModifyRequestDto,
+                                                BindingResult bindingResult,
+                                                @PathVariable Long productId,
+                                                HttpServletRequest request) throws IllegalAccessException {
+        if(bindingResult.hasErrors())
+            return new ResponseEntity<>(new JsonResult<>(bindingResult.getFieldErrors()), HttpStatus.BAD_REQUEST);
+
+        String email = getEmailByToken(request.getHeader(HttpHeaders.AUTHORIZATION));
+        MemberDto member = memberService.getMember(email);
+
+        productService.modify(member.getMemberId(), productId, productModifyRequestDto.toProductModifyDto());
         return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
     }
 

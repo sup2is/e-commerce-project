@@ -5,6 +5,7 @@ import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.product.config.RestDocsConfiguration;
 import me.sup2is.product.domain.dto.MemberDto;
+import me.sup2is.product.domain.dto.ProductModifyRequestDto;
 import me.sup2is.product.domain.dto.ProductRequestDto;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.service.MemberService;
@@ -33,6 +34,8 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -141,6 +144,57 @@ class ProductControllerTest {
                         requestFields(
                                 fieldWithPath("[].productId").description("상품 고유 번호"),
                                 fieldWithPath("[].stock").description("수정될 재고 수량(음수일 경우 재고에서 삭감, 양수일 경우 재고에서 추가)")
+                        )
+                    )
+                );
+    }
+
+    @Test
+    public void modify() throws Exception {
+        //given
+        String email = "test@example.com";
+        MemberDto memberDto = getMemberDto(email);
+
+        Mockito.when(memberService.getMember(email))
+                .thenReturn(memberDto);
+
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
+        ProductModifyRequestDto productModifyRequestDto = ProductModifyRequestDto.builder()
+                .brandName("캘빈클라인")
+                .code("BB12345")
+                .description("빈티지상품")
+                .name("청바지")
+                .price(50000L)
+                .salable(false)
+                .stock(20)
+                .categories(Arrays.asList("의류"))
+                .build();
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/{productId}", 1L)
+                    .content(objectMapper.writeValueAsString(productModifyRequestDto))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("modify-product",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("productId").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").description("수정될 상품명"),
+                                fieldWithPath("code").description("수정될 상품 고유 코드"),
+                                fieldWithPath("brandName").description("수정될 브랜드 명"),
+                                fieldWithPath("description").description("수정될 상품 설명"),
+                                fieldWithPath("stock").description("수정될 상품 재고"),
+                                fieldWithPath("price").description("수정될 판매 가격"),
+                                fieldWithPath("salable").description("수정될 판매 가능 여부"),
+                                fieldWithPath("categories[]").description("수정될 카테고리")
                         )
                     )
                 );

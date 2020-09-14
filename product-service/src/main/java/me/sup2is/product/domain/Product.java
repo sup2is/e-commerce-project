@@ -3,6 +3,7 @@ package me.sup2is.product.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.sup2is.product.domain.dto.ProductModifyDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -51,6 +52,16 @@ public class Product {
 
     public void setSellerId(long sellerId) {
         this.sellerId = sellerId;
+    }
+
+    public void modify(ProductModifyDto productModifyDto) {
+        this.stock = productModifyDto.getStock();
+        this.brandName = productModifyDto.getBrandName();
+        this.price = productModifyDto.getPrice();
+        this.description = productModifyDto.getDescription();
+        this.name = productModifyDto.getName();
+        this.salable = productModifyDto.isSalable();
+        this.code = productModifyDto.getCode();
     }
 
     public static class Builder {

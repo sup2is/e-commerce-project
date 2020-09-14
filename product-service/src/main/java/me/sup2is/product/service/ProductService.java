@@ -3,6 +3,8 @@ package me.sup2is.product.service;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.ProductCategory;
+import me.sup2is.product.domain.dto.ProductModifyDto;
+import me.sup2is.product.domain.dto.ProductModifyRequestDto;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.exception.ProductNotFoundException;
 import me.sup2is.product.repository.ProductRepository;
@@ -44,5 +46,21 @@ public class ProductService {
             p.modifyStock(stockDto.getStock());
             productStockService.insertStock(new ProductStockDto(p.getId(), p.getStock()));
         }
+    }
+
+    public void modify(Long sellerId, Long productId, ProductModifyDto productModifyDto)
+            throws IllegalAccessException {
+        Product product = findOne(productId);
+
+        if(product.getSellerId().longValue() != sellerId.longValue()) {
+            throw new IllegalAccessException("current user is not the owner of this product");
+        }
+
+        product.modify(productModifyDto);
+        List<ProductCategory> productCategories = categoryService.findAllByNames(productModifyDto.getCategories()).stream()
+                .map(c -> ProductCategory.createProductCategory(product, c))
+                .collect(Collectors.toList());
+        product.classifyCategories(productCategories);
+
     }
 }

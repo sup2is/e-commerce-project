@@ -13,9 +13,14 @@ include::{snippets}/create-product/http-request.adoc[]
 include::{snippets}/create-product/request-headers.adoc[]
 include::{snippets}/create-product/request-fields.adoc[]
 
-== 상품 취소
+== 상품 제거
 
 == 상품 수정(정보 수정)
+
+include::{snippets}/modify-product/http-request.adoc[]
+include::{snippets}/modify-product/request-headers.adoc[]
+include::{snippets}/modify-product/path-parameters.adoc[]
+include::{snippets}/modify-product/request-fields.adoc[]
 
 == 상품 수정(재고 수정)
 

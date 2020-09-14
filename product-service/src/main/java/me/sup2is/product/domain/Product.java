@@ -3,6 +3,7 @@ package me.sup2is.product.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.sup2is.product.domain.audit.AuditTime;
 import me.sup2is.product.domain.dto.ProductModifyDto;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product {
+public class Product extends AuditTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

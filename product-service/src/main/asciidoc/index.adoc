@@ -14,6 +14,7 @@ include::{snippets}/create-product/request-headers.adoc[]
 include::{snippets}/create-product/request-fields.adoc[]
 
 == 상품 제거
+=== 상품제거는 상품 수정에서 salable 값으로 조정
 
 == 상품 수정(정보 수정)
 
@@ -29,6 +30,12 @@ include::{snippets}/modify-product-stock/request-headers.adoc[]
 include::{snippets}/modify-product-stock/request-fields.adoc[]
 
 == 상품 조회 (1개)
+
+include::{snippets}/get-product/http-request.adoc[]
+include::{snippets}/get-product/request-headers.adoc[]
+include::{snippets}/get-product/path-parameters.adoc[]
+include::{snippets}/get-product/http-response.adoc[]
+include::{snippets}/get-product/response-fields.adoc[]
 
 == 상품 조회 (n개)
 

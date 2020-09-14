@@ -1,0 +1,26 @@
+= Product Service
+:sectnums:
+:toc: left
+:toclevels: 4
+:toc-title: My Content
+
+※ Spring Cloud 환경에서 Order Service에 대한 모든 요청은 JWT 토큰 必
+
+
+== 상품 등록
+
+include::{snippets}/create-product/http-request.adoc[]
+include::{snippets}/create-product/request-headers.adoc[]
+include::{snippets}/create-product/request-fields.adoc[]
+
+== 상품 취소
+
+== 상품 수정
+
+== 상품 조회 (1개)
+
+== 상품 조회 (n개)
+
+== 상품 조회 (with query)
+
+== 카테고리 등록

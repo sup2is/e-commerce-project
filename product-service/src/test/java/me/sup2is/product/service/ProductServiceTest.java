@@ -39,7 +39,7 @@ class ProductServiceTest {
         List<Category> categories = Arrays.asList(category1,
                 category2);
 
-        ProductRequestDto productRequestDto = new ProductRequestDto(1L,
+        ProductRequestDto productRequestDto = new ProductRequestDto(
                 "청바지",
                 "AA123",
                 "리바이스",
@@ -53,7 +53,7 @@ class ProductServiceTest {
         Mockito.when(categoryService.findAllByNames(categoryNames)).thenReturn(categories);
 
         //when
-        productService.register(product, productRequestDto.getCategories());
+        productService.register(1L, product, productRequestDto.getCategories());
         Product findProduct = productService.findOne(product.getId());
 
         //then
@@ -72,7 +72,7 @@ class ProductServiceTest {
         List<Category> categories = Arrays.asList(category1,
                 category2);
 
-        ProductRequestDto productRequestDto = new ProductRequestDto(1L,
+        ProductRequestDto productRequestDto = new ProductRequestDto(
                 "청바지",
                 "AA123",
                 "리바이스",
@@ -84,7 +84,7 @@ class ProductServiceTest {
 
         Product product = productRequestDto.toEntity();
         Mockito.when(categoryService.findAllByNames(categoryNames)).thenReturn(categories);
-        productService.register(product, productRequestDto.getCategories());
+        productService.register(1L, product, productRequestDto.getCategories());
 
         ProductStockDto productStockDto = new ProductStockDto(product.getId(), -2);
         productService.modifyStock(Arrays.asList(productStockDto));

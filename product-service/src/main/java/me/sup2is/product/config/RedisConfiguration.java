@@ -1,6 +1,7 @@
 package me.sup2is.product.config;
 
 
+import me.sup2is.product.domain.dto.MemberDto;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +47,11 @@ public class RedisConfiguration {
 
     @Bean
     public HashOperations<String, String, ProductStockDto> productStockDtoHashOperations() {
+        return redisTemplate().opsForHash();
+    }
+
+    @Bean
+    public HashOperations<String, String, MemberDto> memberDtoHashOperations() {
         return redisTemplate().opsForHash();
     }
 

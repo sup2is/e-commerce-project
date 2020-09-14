@@ -1,31 +1,41 @@
 package me.sup2is.product.domain.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import me.sup2is.product.domain.Product;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
+@Builder
 public class ProductRequestDto {
 
-    private Long sellerId;
-
+    @NotNull
     private String name;
 
+    @NotNull
     private String code;
 
+    @NotNull
     private String brandName;
 
+    @NotNull
     private String description;
 
-    private int stock;
+    @NotNull
+    private Integer stock;
 
+    @NotNull
     private Long price;
 
-    private boolean salable;
+    @NotNull
+    private Boolean salable;
 
+    @NotEmpty
     private List<String> categories;
 
     public Product toEntity() {
@@ -36,7 +46,6 @@ public class ProductRequestDto {
                 .setName(this.name)
                 .setPrice(this.price)
                 .setSalable(this.salable)
-                .setSellerId(this.sellerId)
                 .setStock(this.stock);
         return Product.createProduct(builder);
     }

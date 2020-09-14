@@ -49,6 +49,10 @@ public class Product {
         this.stock += stock;
     }
 
+    public void setSellerId(long sellerId) {
+        this.sellerId = sellerId;
+    }
+
     public static class Builder {
         private Long sellerId;
 

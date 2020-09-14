@@ -1,5 +1,6 @@
 package me.sup2is.product.service;
 
+import me.sup2is.product.client.MemberServiceClient;
 import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.ProductCategory;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -35,6 +37,9 @@ public class ProductCategoryIntegrationTest {
     @Autowired
     ProductCategoryRepository productCategoryRepository;
 
+    @MockBean
+    MemberServiceClient memberServiceClient;
+
     @Test
     @DisplayName("Category, Product N:M 테스트")
     public void register() {
@@ -45,7 +50,7 @@ public class ProductCategoryIntegrationTest {
         List<Category> categories = Arrays.asList(category1,
                 category2);
 
-        ProductRequestDto productRequestDto = new ProductRequestDto(1L,
+        ProductRequestDto productRequestDto = new ProductRequestDto(
                 "청바지",
                 "AA123",
                 "리바이스",
@@ -62,7 +67,7 @@ public class ProductCategoryIntegrationTest {
             categoryService.add(category);
         }
 
-        productService.register(product, productRequestDto.getCategories());
+        productService.register(1L, product, productRequestDto.getCategories());
 
         //then
         Product one = productService.findOne(product.getId());

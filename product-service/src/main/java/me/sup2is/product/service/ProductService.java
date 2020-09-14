@@ -22,7 +22,9 @@ public class ProductService {
     private final ProductCategoryService productCategoryService;
     private final ProductStockService productStockService;
 
-    public void register(Product product, List<String> categoryNames) {
+    public void register(Long sellerId, Product product, List<String> categoryNames) {
+        product.setSellerId(sellerId);
+
         productRepository.save(product);
         List<ProductCategory> productCategories = categoryService.findAllByNames(categoryNames).stream()
                 .map(c -> ProductCategory.createProductCategory(product, c))

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.ProductCategory;
 import me.sup2is.product.domain.dto.ProductModifyDto;
-import me.sup2is.product.domain.dto.ProductModifyRequestDto;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.exception.ProductNotFoundException;
 import me.sup2is.product.repository.ProductRepository;

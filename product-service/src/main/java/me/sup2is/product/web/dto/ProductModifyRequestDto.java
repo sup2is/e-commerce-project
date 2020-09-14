@@ -1,8 +1,9 @@
-package me.sup2is.product.domain.dto;
+package me.sup2is.product.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import me.sup2is.product.domain.dto.ProductModifyDto;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

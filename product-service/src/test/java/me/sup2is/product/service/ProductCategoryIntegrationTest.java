@@ -4,7 +4,7 @@ import me.sup2is.product.client.MemberServiceClient;
 import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.ProductCategory;
-import me.sup2is.product.domain.dto.ProductRequestDto;
+import me.sup2is.product.web.dto.ProductRequestDto;
 import me.sup2is.product.repository.ProductCategoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

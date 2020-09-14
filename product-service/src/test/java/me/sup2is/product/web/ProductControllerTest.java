@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.product.config.RestDocsConfiguration;
+import me.sup2is.product.domain.Category;
+import me.sup2is.product.domain.Product;
+import me.sup2is.product.domain.ProductCategory;
 import me.sup2is.product.domain.dto.MemberDto;
-import me.sup2is.product.domain.dto.ProductModifyRequestDto;
-import me.sup2is.product.domain.dto.ProductRequestDto;
+import me.sup2is.product.web.dto.ProductModifyRequestDto;
+import me.sup2is.product.web.dto.ProductRequestDto;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductService;
@@ -23,17 +26,13 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -200,6 +199,61 @@ class ProductControllerTest {
                 );
     }
 
+
+    @Test
+    public void get_product() throws Exception {
+        //given
+        String email = "test@example.com";
+
+        Product.Builder builder = new Product.Builder();
+        builder.setBrandName("리바이스")
+                .setCode("AA123")
+                .setDescription("빈티지")
+                .setName("청바지")
+                .setSalable(true)
+                .setPrice(5000L)
+                .setStock(20);
+        Product product = Product.createProduct(builder);
+
+        ProductCategory productCategory = ProductCategory.createProductCategory(product, Category.createCategory("의류"));
+        product.classifyCategories(Arrays.asList(productCategory));
+
+        Mockito.when(productService.findOne(1L))
+                .thenReturn(product);
+
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/{productId}", 1L)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("get-product",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("productId").description("상품 번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("result").description("API 요청 결과 SUCCESS / FAIL"),
+                                fieldWithPath("messages").description("API 요청 메시지"),
+                                fieldWithPath("error").description("API 요청 에러"),
+                                fieldWithPath("fieldErrors").description("API form validation 에러"),
+                                fieldWithPath("data").description("API 요청 데이터"),
+                                fieldWithPath("data.name").description("상품명"),
+                                fieldWithPath("data.code").description("상품 고유 코드"),
+                                fieldWithPath("data.brandName").description("브랜드 명"),
+                                fieldWithPath("data.description").description("상품 설명"),
+                                fieldWithPath("data.stock").description("상품 재고"),
+                                fieldWithPath("data.price").description("판매 가격"),
+                                fieldWithPath("data.salable").description("판매 가능 여부"),
+                                fieldWithPath("data.categories[]").description("카테고리")
+                        )
+                    )
+                );
+    }
 
     private MemberDto getMemberDto(String email) {
         return MemberDto.builder()

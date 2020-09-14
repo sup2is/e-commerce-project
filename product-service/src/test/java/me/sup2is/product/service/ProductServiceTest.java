@@ -2,8 +2,8 @@ package me.sup2is.product.service;
 
 import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
-import me.sup2is.product.domain.dto.ProductModifyRequestDto;
-import me.sup2is.product.domain.dto.ProductRequestDto;
+import me.sup2is.product.web.dto.ProductModifyRequestDto;
+import me.sup2is.product.web.dto.ProductRequestDto;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

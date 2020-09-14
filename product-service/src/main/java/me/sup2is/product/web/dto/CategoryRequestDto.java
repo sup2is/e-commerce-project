@@ -1,4 +1,4 @@
-package me.sup2is.product.domain.dto;
+package me.sup2is.product.web.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

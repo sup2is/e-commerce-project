@@ -15,7 +15,13 @@ include::{snippets}/create-product/request-fields.adoc[]
 
 == 상품 취소
 
-== 상품 수정
+== 상품 수정(정보 수정)
+
+== 상품 수정(재고 수정)
+
+include::{snippets}/modify-product-stock/http-request.adoc[]
+include::{snippets}/modify-product-stock/request-headers.adoc[]
+include::{snippets}/modify-product-stock/request-fields.adoc[]
 
 == 상품 조회 (1개)
 

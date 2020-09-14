@@ -37,7 +37,7 @@ public class ProductCategoryIntegrationTest {
     @Autowired
     ProductCategoryRepository productCategoryRepository;
 
-    @MockBean
+    @MockBean(name = "memberServiceClient")
     MemberServiceClient memberServiceClient;
 
     @Test

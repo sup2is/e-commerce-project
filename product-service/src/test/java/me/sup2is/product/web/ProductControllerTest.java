@@ -120,16 +120,30 @@ class ProductControllerTest {
         String email = "test@example.com";
         MemberDto memberDto = getMemberDto(email);
 
+
         Mockito.when(memberService.getMember(email))
                 .thenReturn(memberDto);
 
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
         //when
         //then
-        mockMvc.perform(put("/stock")
-                .content(objectMapper.writeValueAsString(Arrays.asList(productStockDto1, productStockDto2)))
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/stock")
+                    .content(objectMapper.writeValueAsString(Arrays.asList(productStockDto1, productStockDto2)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("modify-product-stock",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                        ),
+                        requestFields(
+                                fieldWithPath("[].productId").description("상품 고유 번호"),
+                                fieldWithPath("[].stock").description("수정될 재고 수량(음수일 경우 재고에서 삭감, 양수일 경우 재고에서 추가)")
+                        )
+                    )
+                );
     }
 
 

@@ -215,15 +215,16 @@ class ProductControllerTest {
         //given
         String email = "test@example.com";
 
-        Product.Builder builder = new Product.Builder();
-        builder.setBrandName("리바이스")
-                .setCode("AA123")
-                .setDescription("빈티지")
-                .setName("청바지")
-                .setSalable(true)
-                .setPrice(5000L)
-                .setStock(20);
-        Product product = Product.createProduct(builder);
+        Product product = Product.Builder.builder()
+                .brandName("리바이스")
+                .code("AA123")
+                .description("빈티지")
+                .name("청바지")
+                .salable(true)
+                .price(5000L)
+                .stock(20)
+                .build()
+                .toEntity();
 
         ProductCategory productCategory = ProductCategory.createProductCategory(product, Category.createCategory("의류"));
         product.classifyCategories(Arrays.asList(productCategory));
@@ -270,16 +271,16 @@ class ProductControllerTest {
         //given
         String email = "test@example.com";
 
-        Product product = Product.createProduct(
-                Product.builder()
-                        .setBrandName("캘빈클라인")
-                        .setCode("AA123")
-                        .setDescription("빈티지")
-                        .setName("청바지")
-                        .setSalable(true)
-                        .setPrice(5000L)
-                        .setStock(20)
-        );
+        Product product = Product.Builder.builder()
+                .brandName("캘빈클라인")
+                .code("AA123")
+                .description("빈티지")
+                .name("청바지")
+                .salable(true)
+                .price(5000L)
+                .stock(20)
+                .build()
+                .toEntity();
 
         ProductCategory productCategory = ProductCategory.createProductCategory(product, Category.createCategory("빈티지"));
         product.classifyCategories(Arrays.asList(productCategory));

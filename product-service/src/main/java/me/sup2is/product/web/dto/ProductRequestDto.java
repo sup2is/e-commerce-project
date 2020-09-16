@@ -39,14 +39,15 @@ public class ProductRequestDto {
     private List<String> categories;
 
     public Product toEntity() {
-        Product.Builder builder = new Product.Builder();
-        builder.setCode(this.code)
-                .setDescription(this.description)
-                .setBrandName(this.brandName)
-                .setName(this.name)
-                .setPrice(this.price)
-                .setSalable(this.salable)
-                .setStock(this.stock);
-        return Product.createProduct(builder);
+        return Product.Builder.builder()
+                .code(this.code)
+                .description(this.description)
+                .brandName(this.brandName)
+                .name(this.name)
+                .price(this.price)
+                .salable(this.salable)
+                .stock(this.stock)
+                .build()
+                .toEntity();
     }
 }

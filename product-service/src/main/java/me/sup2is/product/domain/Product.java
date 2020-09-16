@@ -40,7 +40,16 @@ public class Product extends AuditTime {
     private boolean salable;
 
     public static Product createProduct(Builder builder) {
-        return builder.build();
+        Product product = new Product();
+        product.categories = builder.categories;
+        product.description = builder.description;
+        product.brandName = builder.brandName;
+        product.name = builder.name;
+        product.code = builder.code;
+        product.price = builder.price;
+        product.salable = builder.salable;
+        product.stock = builder.stock;
+        return product;
     }
 
     public void classifyCategories(List<ProductCategory> categories) {
@@ -65,77 +74,19 @@ public class Product extends AuditTime {
         this.code = productModifyDto.getCode();
     }
 
+    @lombok.Builder
     public static class Builder {
-        private Long sellerId;
-
         private String name;
-
         private String code;
-
         private String brandName;
-
         private String description;
-
         private Integer stock;
-
         private Long price;
-
-        private List<ProductCategory> categories = new ArrayList<>();
-
+        private List<ProductCategory> categories;
         private Boolean salable;
 
-        public Builder setSellerId(Long sellerId) {
-            this.sellerId = sellerId;
-            return this;
-        }
-
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder setCode(String code) {
-            this.code = code;
-            return this;
-        }
-
-        public Builder setBrandName(String brandName) {
-            this.brandName = brandName;
-            return this;
-        }
-
-        public Builder setDescription(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Builder setStock(Integer stock) {
-            this.stock = stock;
-            return this;
-        }
-
-        public Builder setPrice(Long price) {
-            this.price = price;
-            return this;
-        }
-
-        public Builder setSalable(boolean salable) {
-            this.salable = salable;
-            return this;
-        }
-
-        private Product build() {
-            Product product = new Product();
-            product.categories = this.categories;
-            product.description = this.description;
-            product.sellerId = this.sellerId;
-            product.brandName = this.brandName;
-            product.name = this.name;
-            product.code = this.code;
-            product.price = this.price;
-            product.salable = this.salable;
-            product.stock = this.stock;
-            return product;
+        public Product toEntity() {
+            return Product.createProduct(this);
         }
     }
 

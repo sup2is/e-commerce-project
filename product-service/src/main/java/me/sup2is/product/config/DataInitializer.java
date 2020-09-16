@@ -20,17 +20,19 @@ public class DataInitializer {
     public void init() {
 
         for (int i = 0; i < 100; i++) {
-            Product.Builder builder = new Product.Builder();
-            Product product = Product.createProduct(builder.setBrandName("brand" + i)
-                    .setCode("AA" + i)
-                    .setDescription("description" + i)
-                    .setName("product name " + i)
-                    .setPrice(10000L)
-                    .setSalable(true)
-                    .setSellerId((long) i)
-                    .setStock((int) (Math.random() * 100)));
 
-            productService.register(product, Arrays.asList((int) (Math.random() * 10) + ""));
+            Product product = Product.Builder.builder()
+                    .brandName("brand" + i)
+                    .code("AA" + i)
+                    .description("description" + i)
+                    .name("product name " + i)
+                    .salable(true)
+                    .price(10000L)
+                    .stock((int) (Math.random() * 100))
+                    .build()
+                    .toEntity();
+
+            productService.register(1L, product, Arrays.asList((int) (Math.random() * 10) + ""));
         }
     }
     

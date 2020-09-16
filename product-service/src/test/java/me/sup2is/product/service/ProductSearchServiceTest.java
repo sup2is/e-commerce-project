@@ -45,28 +45,9 @@ class ProductSearchServiceTest {
     public void find_all_by_query_with_name() {
         //given
 
-        Product.Builder builder = new Product.Builder();
-        builder.setStock(5)
-                .setSellerId(1L)
-                .setPrice(10000L)
-                .setSalable(true)
-                .setName("청바지")
-                .setBrandName("리바이스")
-                .setDescription("빈티지")
-                .setCode("AA123");
+        Product product = getProduct(10000L, "청바지", "리바이스", "빈티지", "AA123");
+        Product product2 = getProduct(50000L, "면바지", "캘빈클라인", "음 ...", "CK123");
 
-        Product.Builder builder2 = new Product.Builder();
-        builder2.setStock(5)
-                .setSellerId(1L)
-                .setPrice(50000L)
-                .setSalable(true)
-                .setName("면바지")
-                .setBrandName("캘빈클라인")
-                .setDescription("음 ...")
-                .setCode("CK123");
-
-        Product product = Product.createProduct(builder);
-        Product product2 = Product.createProduct(builder2);
         productRepository.save(product);
         productRepository.save(product2);
 
@@ -85,29 +66,8 @@ class ProductSearchServiceTest {
     @DisplayName("카테고리명 + 상품명으로 검색")
     public void find_all_by_query_with_category_and_product_name() {
         //given
-
-        Product.Builder builder = new Product.Builder();
-        builder.setStock(5)
-                .setSellerId(1L)
-                .setPrice(10000L)
-                .setSalable(true)
-                .setName("청바지")
-                .setBrandName("리바이스")
-                .setDescription("빈티지")
-                .setCode("AA123");
-
-        Product.Builder builder2 = new Product.Builder();
-        builder2.setStock(5)
-                .setSellerId(1L)
-                .setPrice(50000L)
-                .setSalable(true)
-                .setName("면바지")
-                .setBrandName("캘빈클라인")
-                .setDescription("음 ...")
-                .setCode("CK123");
-
-        Product product = Product.createProduct(builder);
-        Product product2 = Product.createProduct(builder2);
+        Product product = getProduct(10000L, "청바지", "리바이스", "빈티지", "AA123");
+        Product product2 = getProduct(50000L, "면바지", "캘빈클라인", "음 ...", "CK123");
 
         productService.register(1L, product, Arrays.asList("의류"));
         productService.register(1L, product2, Arrays.asList("의류", "바지"));
@@ -134,40 +94,9 @@ class ProductSearchServiceTest {
     @DisplayName("카테고리명 + 상품명 + 가격으로 검색")
     public void find_all_by_query_with_category_and_product_name_and_price() {
         //given
-
-        Product.Builder builder = new Product.Builder();
-        builder.setStock(5)
-                .setSellerId(1L)
-                .setPrice(10000L)
-                .setSalable(true)
-                .setName("청바지")
-                .setBrandName("리바이스")
-                .setDescription("빈티지")
-                .setCode("AA123");
-
-        Product.Builder builder2 = new Product.Builder();
-        builder2.setStock(5)
-                .setSellerId(1L)
-                .setPrice(50000L)
-                .setSalable(true)
-                .setName("면바지")
-                .setBrandName("캘빈클라인")
-                .setDescription("음 ...")
-                .setCode("CK123");
-
-        Product.Builder builder3 = new Product.Builder();
-        builder3.setStock(5)
-                .setSellerId(1L)
-                .setPrice(70000L)
-                .setSalable(true)
-                .setName("정장바지")
-                .setBrandName("갤럭시")
-                .setDescription("음 ...")
-                .setCode("BB123");
-
-        Product product = Product.createProduct(builder);
-        Product product2 = Product.createProduct(builder2);
-        Product product3 = Product.createProduct(builder3);
+        Product product = getProduct(10000L, "청바지", "리바이스", "빈티지", "AA123");
+        Product product2 = getProduct(50000L, "면바지", "캘빈클라인", "음 ...", "CK123");
+        Product product3 = getProduct(70000L, "정장바지", "갤럭시", "음 ...", "BB123");
 
         productService.register(1L, product, Arrays.asList("의류"));
         productService.register(1L, product2, Arrays.asList("의류", "바지"));
@@ -189,5 +118,18 @@ class ProductSearchServiceTest {
 
         Product one = productService.findOne(product3.getId());
         assertEquals(one, allByQuery.get(0));
+    }
+
+    private Product getProduct(long price, String name, String brandName, String description, String code) {
+        return Product.Builder.builder()
+                .stock(5)
+                .price(price)
+                .salable(true)
+                .name(name)
+                .brandName(brandName)
+                .description(description)
+                .code(code)
+                .build()
+                .toEntity();
     }
 }

@@ -24,19 +24,16 @@ class ProductRepositoryTest {
     public void save_without_categories() {
 
         //given
-        Product.Builder builder = new Product.Builder();
-        builder.setStock(5)
-                .setSellerId(1L)
-                .setPrice(10000L)
-                .setSalable(true)
-                .setName("청바지")
-                .setBrandName("리바이스")
-                .setDescription("빈티지")
-                .setCode("AA123");
+        Product product = Product.Builder.builder()
+                .price(10000L)
+                .salable(true)
+                .name("청바지")
+                .brandName("리바이스")
+                .description("빈티지")
+                .code("AA123")
+                .build()
+                .toEntity();
 
-        Product product = Product.createProduct(builder);
-
-        //when
         productRepository.save(product);
 
         //then

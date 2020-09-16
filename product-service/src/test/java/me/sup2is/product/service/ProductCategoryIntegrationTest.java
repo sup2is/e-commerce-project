@@ -4,6 +4,8 @@ import me.sup2is.product.client.MemberServiceClient;
 import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.ProductCategory;
+import me.sup2is.product.domain.dto.MemberDto;
+import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.web.dto.ProductRequestDto;
 import me.sup2is.product.repository.ProductCategoryRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +15,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -39,6 +42,12 @@ public class ProductCategoryIntegrationTest {
 
     @MockBean(name = "memberServiceClient")
     MemberServiceClient memberServiceClient;
+
+    @MockBean
+    HashOperations<String, String, ProductStockDto> stringStringProductStockDtoHashOperations;
+
+    @MockBean
+    HashOperations<String, String, MemberDto> stringStringMemberDtoHashOperations;
 
     @Test
     @DisplayName("Category, Product N:M 테스트")

@@ -1,7 +1,6 @@
 package me.sup2is.product.service;
 
 import me.sup2is.product.domain.Product;
-import me.sup2is.product.web.dto.PriceQueryDto;
 import me.sup2is.product.web.dto.ProductSpecificationQueryDto;
 import me.sup2is.product.repository.ProductRepository;
 import me.sup2is.product.web.dto.ProductPageRequestDto;
@@ -71,7 +70,8 @@ class ProductSearchServiceTest {
         productRepository.save(product);
         productRepository.save(product2);
 
-        ProductSpecificationQueryDto productSpecificationQuery = new ProductSpecificationQueryDto("바지", "", "", null, null);
+        ProductSpecificationQueryDto productSpecificationQuery =
+                new ProductSpecificationQueryDto("바지", "", "", 0L, 0L, null);
         PageRequest productPageRequest = ProductPageRequestDto.createProductPageRequest(0, 5);
 
         //when
@@ -115,7 +115,8 @@ class ProductSearchServiceTest {
         ProductSpecificationQueryDto productSpecificationQuery = new ProductSpecificationQueryDto("바지",
                 "",
                 "",
-                null,
+                0L,
+                0L,
                 Arrays.asList("바지"));
         PageRequest productPageRequest = ProductPageRequestDto.createProductPageRequest(0, 5);
 
@@ -175,7 +176,8 @@ class ProductSearchServiceTest {
         ProductSpecificationQueryDto productSpecificationQuery = new ProductSpecificationQueryDto("바지",
                 "",
                 "",
-                new PriceQueryDto("<", 60000L),
+                52000L,
+                80000L,
                 Arrays.asList("의류", "정장"));
         PageRequest productPageRequest = ProductPageRequestDto.createProductPageRequest(0, 5);
 

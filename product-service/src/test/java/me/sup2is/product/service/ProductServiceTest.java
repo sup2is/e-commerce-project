@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.redis.core.HashOperations;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 
 @DataJpaTest
 @Import({ProductService.class, ProductCategoryService.class, ProductStockService.class})
+@EnableJpaAuditing
 class ProductServiceTest {
 
     @Autowired

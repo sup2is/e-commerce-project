@@ -2,7 +2,6 @@ package me.sup2is.product.service;
 
 import lombok.RequiredArgsConstructor;
 import me.sup2is.product.domain.Product;
-import me.sup2is.product.web.dto.PriceQueryDto;
 import me.sup2is.product.repository.ProductRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -46,16 +45,15 @@ public class ProductSearchService {
                 case BRAND_NAME:
                     predicates.add(
                             builder.like(root.get(key.getName()).as(String.class),
-                                    "%" + querySet.getValue() + "%")
-                    );
+                                    "%" + querySet.getValue() + "%"));
                     break;
-                case PRICE:
-                    PriceQueryDto pq = (PriceQueryDto) querySet.getValue();
-                    if(pq.getOperation().equals("<")) {
-                        predicates.add(builder.greaterThanOrEqualTo(root.get(key.getName()), pq.getValue()));
-                    } else if (pq.getOperation().equals(">")) {
-                        predicates.add(builder.lessThanOrEqualTo(root.get(key.getName()), pq.getValue()));
-                    }
+                case MAX_PRICE:
+                    predicates.add(builder.lessThanOrEqualTo(
+                            root.get(key.getName()), (Long)querySet.getValue()));
+                    break;
+                case MIN_PRICE:
+                    predicates.add(builder.greaterThanOrEqualTo(
+                            root.get(key.getName()), (Long)querySet.getValue()));
                     break;
                 case CATEGORY:
                     List<Long> productCategories = getProductIdsByCategories(querySet);

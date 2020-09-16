@@ -3,13 +3,14 @@ package me.sup2is.product.web;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.product.domain.Product;
+import me.sup2is.product.service.ProductSearchService;
+import me.sup2is.product.web.dto.ProductSpecificationQueryDto;
 import me.sup2is.product.domain.dto.*;
 import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductService;
-import me.sup2is.product.web.dto.ProductModifyRequestDto;
-import me.sup2is.product.web.dto.ProductRequestDto;
-import me.sup2is.product.web.dto.ProductResponseDto;
+import me.sup2is.product.web.dto.*;
 import me.sup2is.web.JsonResult;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class ProductController {
     private final ProductService productService;
     private final MemberService memberService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ProductSearchService productSearchService;
 
     @PostMapping("/")
     public ResponseEntity<JsonResult<?>> register(@RequestBody @Valid ProductRequestDto productRequestDto,
@@ -69,6 +71,16 @@ public class ProductController {
     public ResponseEntity<JsonResult<?>> getProduct(@PathVariable Long productId){
         Product findProduct = productService.findOne(productId);
         return ResponseEntity.ok(new JsonResult<>(new ProductResponseDto(findProduct)));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<JsonResult<?>> getProducts(@RequestParam(defaultValue = "0") int pageNo,
+                                                     @RequestParam(defaultValue = "5") int pageSize,
+                                                     ProductSpecificationQueryDto productSpecificationQuery){
+
+        PageRequest pageRequest = ProductPageRequestDto.createProductPageRequest(pageNo, pageSize);
+        List<Product> findProducts = productSearchService.findAllByQuery(pageRequest, productSpecificationQuery.createQueryMap());
+        return ResponseEntity.ok(new JsonResult<>(ProductResponseDto.createProductsResponseDto(findProducts)));
     }
 
 

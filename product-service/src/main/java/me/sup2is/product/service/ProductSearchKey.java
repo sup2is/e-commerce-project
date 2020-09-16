@@ -7,9 +7,10 @@ public enum ProductSearchKey {
 
     NAME("name"),
     CODE("code"),
-    BRAND_NAME("brand_name"),
-    PRICE("price"),
-    CATEGORY("product_id");
+    BRAND_NAME("brandName"),
+    MAX_PRICE("price"),
+    MIN_PRICE("price"),
+    CATEGORY("category");
 
     private String name;
 

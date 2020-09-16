@@ -1,6 +1,8 @@
 package me.sup2is.product.web;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jersey.api.client.Client;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.product.config.RestDocsConfiguration;
@@ -8,8 +10,9 @@ import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.ProductCategory;
 import me.sup2is.product.domain.dto.MemberDto;
-import me.sup2is.product.web.dto.ProductModifyRequestDto;
-import me.sup2is.product.web.dto.ProductRequestDto;
+import me.sup2is.product.service.ProductSearchKey;
+import me.sup2is.product.service.ProductSearchService;
+import me.sup2is.product.web.dto.*;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductService;
@@ -21,20 +24,24 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -59,6 +66,9 @@ class ProductControllerTest {
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
+
+    @MockBean
+    ProductSearchService productSearchService;
 
     @Test
     public void register() throws Exception {
@@ -253,6 +263,121 @@ class ProductControllerTest {
                         )
                     )
                 );
+    }
+
+    @Test
+    public void get_product_by_search_query() throws Exception {
+        //given
+        String email = "test@example.com";
+
+        Product product = Product.createProduct(
+                Product.builder()
+                        .setBrandName("캘빈클라인")
+                        .setCode("AA123")
+                        .setDescription("빈티지")
+                        .setName("청바지")
+                        .setSalable(true)
+                        .setPrice(5000L)
+                        .setStock(20)
+        );
+
+        ProductCategory productCategory = ProductCategory.createProductCategory(product, Category.createCategory("빈티지"));
+        product.classifyCategories(Arrays.asList(productCategory));
+
+        Mockito.when(productService.findOne(1L))
+                .thenReturn(product);
+
+        PageRequest productPageRequest = ProductPageRequestDto.createProductPageRequest(0, 5);
+        ProductSpecificationQueryDto productSpecificationQueryDto = new ProductSpecificationQueryDto("바지",
+                "AA123",
+                "캘빈클라인",
+                5000L,
+                100000L,
+                Arrays.asList("빈티지", "슬림핏"));
+
+        Map<ProductSearchKey, Object> queryMap = productSpecificationQueryDto.createQueryMap();
+
+        Mockito.when(productSearchService.findAllByQuery(productPageRequest, queryMap))
+                .thenReturn(Arrays.asList(product));
+
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
+        Map<String, Object> map =
+                objectMapper.convertValue(productSpecificationQueryDto, new TypeReference<Map<String, Object>>() {});
+
+//        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<>();
+//        map.entrySet().forEach(e -> linkedMultiValueMap.add(e.getKey(), e.getValue()));
+
+//        String s = toQueryString(map);
+
+        String s = "name=바지&code=AA123&brandName=캘빈클라인&minPrice=5000&maxPrice=100000&categories=빈티지,슬림핏";
+
+        //when
+        //then
+        String urlTemplate = "/search?" + s;
+        System.out.println(urlTemplate);
+        mockMvc.perform(RestDocumentationRequestBuilders.get(urlTemplate)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("get-products",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                        ),
+                        requestParameters(
+                                parameterWithName("name").description("상품 명"),
+                                parameterWithName("code").description("상품 코드"),
+                                parameterWithName("brandName").description("브랜드 명"),
+                                parameterWithName("minPrice").description("최소 가격"),
+                                parameterWithName("maxPrice").description("최대 가격"),
+                                parameterWithName("categories").description("카테고리 종류")
+                        ),
+                        responseFields(
+                                fieldWithPath("result").description("API 요청 결과 SUCCESS / FAIL"),
+                                fieldWithPath("messages").description("API 요청 메시지"),
+                                fieldWithPath("error").description("API 요청 에러"),
+                                fieldWithPath("fieldErrors").description("API form validation 에러"),
+                                fieldWithPath("data[]").description("API 요청 데이터"),
+                                fieldWithPath("data[].name").description("상품명"),
+                                fieldWithPath("data[].code").description("상품 고유 코드"),
+                                fieldWithPath("data[].brandName").description("브랜드 명"),
+                                fieldWithPath("data[].description").description("상품 설명"),
+                                fieldWithPath("data[].stock").description("상품 재고"),
+                                fieldWithPath("data[].price").description("판매 가격"),
+                                fieldWithPath("data[].salable").description("판매 가능 여부"),
+                                fieldWithPath("data[].categories[]").description("카테고리")
+                        )
+                    )
+                );
+    }
+
+    private String toQueryString(Map<String, Object> map) {
+        StringBuilder qs = new StringBuilder();
+        for (String key : map.keySet()){
+
+            if (key.equals("categories")) {
+                List<String> categories = (List<String>) map.get(key);
+                qs.append("categories=");
+                for (int i = 0; i < categories.size(); i++) {
+                    qs.append(categories.get(i) + ",");
+                }
+
+                qs.deleteCharAt(qs.length() - 1);
+
+            }else {
+                qs.append(key);
+                qs.append("=");
+                qs.append(map.get(key));
+                qs.append("&");
+            }
+
+        }
+
+        // delete last '&'
+        if (qs.length() != 0) {
+            qs.deleteCharAt(qs.length() - 1);
+        }
+        return qs.toString();
     }
 
     private MemberDto getMemberDto(String email) {

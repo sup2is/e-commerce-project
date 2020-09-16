@@ -18,13 +18,12 @@
         <module>api-gateway</module>
         <module>member-service</module>
         <module>order-service</module>
-        <module>member-service</module>
         <module>product-service</module>
-        <module>member-service</module>
         <module>config-server</module>
         <module>eureka-server</module>
         <module>authentication-service</module>
         <module>common</module>
+        <module>embedded-redis-module</module>
     </modules>
 
     <name>e-commerce-project</name>

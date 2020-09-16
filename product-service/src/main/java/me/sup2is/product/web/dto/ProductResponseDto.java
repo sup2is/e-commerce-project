@@ -45,4 +45,11 @@ public class ProductResponseDto {
                 .map(cp -> cp.getCategory().getName())
                 .collect(toList());
     }
+
+    public static List<ProductResponseDto> createProductsResponseDto(List<Product> findProducts) {
+        return findProducts.stream()
+                .map(ProductResponseDto::new)
+                .collect(toList());
+    }
+
 }

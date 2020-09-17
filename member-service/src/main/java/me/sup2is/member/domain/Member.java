@@ -49,7 +49,6 @@ public class Member {
         member.zipCode = builder.zipCode;
         member.phone = builder.phone;
         member.enable = builder.enable;
-        //todo role 구분해야함 일단 member로 지정
         member.authorities = builder.authorities.stream()
                 .map(a -> Authority.createAuthority(member, Auth.valueOf(a)))
                 .collect(Collectors.toList());

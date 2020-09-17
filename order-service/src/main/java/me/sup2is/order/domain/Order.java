@@ -54,7 +54,6 @@ public class Order extends AuditTime{
         for (OrderItem orderItem : order.orderItems)
             orderItem.setOrder(order);
 
-        order.setTotalPrice();
         return order;
     }
 
@@ -62,7 +61,7 @@ public class Order extends AuditTime{
         this.memberId = memberId;
     }
 
-    private void setTotalPrice() {
+    public void setTotalPrice() {
         this.totalPrice = this.orderItems.stream()
                 .map(orderItem -> orderItem.getItemTotalPrice())
                 .reduce(0L, Long::sum);

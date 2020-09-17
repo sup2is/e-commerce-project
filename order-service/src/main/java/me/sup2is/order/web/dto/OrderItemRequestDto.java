@@ -25,7 +25,6 @@ public class OrderItemRequestDto {
         return OrderItem.Builder.builder()
                 .count(count)
                 .discountRate(discountRate)
-                .price(price)
                 .productId(productId)
                 .build()
                 .toEntity();

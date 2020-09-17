@@ -37,7 +37,6 @@ public class OrderItem extends AuditTime {
         OrderItem orderItem = new OrderItem();
         orderItem.count = builder.count;
         orderItem.productId = builder.productId;
-        orderItem.price = builder.price;
         orderItem.discountRate = builder.discountRate;
         orderItem.orderStatus = OrderStatus.ORDER;
         return orderItem;
@@ -45,6 +44,10 @@ public class OrderItem extends AuditTime {
 
     public void setOrder(Order order){
         this.order = order;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
     }
 
     public Long getItemTotalPrice() {
@@ -66,8 +69,6 @@ public class OrderItem extends AuditTime {
     public static class Builder {
 
         private Long productId;
-
-        private Long price;
 
         private Integer count;
 

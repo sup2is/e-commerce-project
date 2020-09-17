@@ -29,7 +29,6 @@ class OrderRepositoryTest {
         //given
         OrderItem orderItem1 = OrderItem.Builder.builder()
                 .productId(1L)
-                .price(10000L)
                 .discountRate(0)
                 .count(2)
                 .build()
@@ -37,7 +36,6 @@ class OrderRepositoryTest {
 
         OrderItem orderItem2 = OrderItem.Builder.builder()
                 .productId(22L)
-                .price(50000L)
                 .discountRate(0)
                 .count(1)
                 .build()

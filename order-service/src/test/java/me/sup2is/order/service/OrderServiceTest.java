@@ -7,6 +7,7 @@ import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
 import me.sup2is.order.domain.OrderStatus;
 import me.sup2is.order.domain.dto.ModifyOrderItem;
+import me.sup2is.order.domain.dto.ProductStockDto;
 import me.sup2is.order.exception.CancelFailureException;
 import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
@@ -28,7 +29,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 @DataJpaTest
 @Import({OrderService.class,
@@ -74,6 +77,10 @@ class OrderServiceTest {
                 .build()
                 .toEntity();
 
+
+        when(cachedProductStockService.getCachedProductStock(anyLong()))
+                .thenReturn(new ProductStockDto(1L,5,10000L), new ProductStockDto(22L,5,50000L));
+
         //when
         orderService.order(1L, order);
 
@@ -114,9 +121,8 @@ class OrderServiceTest {
                 .build()
                 .toEntity();
 
-        doThrow(new OutOfStockException(""))
-                .when(cachedProductStockService)
-                .checkItemStock(orderItem1);
+        when(cachedProductStockService.getCachedProductStock(anyLong()))
+                .thenReturn(new ProductStockDto(1L,0,10000L), new ProductStockDto(22L,0,50000L));
 
         //when
         //then
@@ -138,7 +144,12 @@ class OrderServiceTest {
                 .build()
                 .toEntity();
 
+        when(cachedProductStockService.getCachedProductStock(anyLong()))
+                .thenReturn(new ProductStockDto(1L,5,10000L), new ProductStockDto(22L,5,50000L));
+
         orderService.order(1L, order);
+
+
 
         //when
         orderService.cancel(order.getId(), 1L);
@@ -164,6 +175,9 @@ class OrderServiceTest {
                 .build()
                 .toEntity();
 
+        when(cachedProductStockService.getCachedProductStock(anyLong()))
+                .thenReturn(new ProductStockDto(1L,5,10000L), new ProductStockDto(22L,5,50000L));
+
         orderService.order(1L, order);
 
         //when
@@ -187,6 +201,9 @@ class OrderServiceTest {
                 .build()
                 .toEntity();
 
+        when(cachedProductStockService.getCachedProductStock(anyLong()))
+                .thenReturn(new ProductStockDto(1L,5,10000L), new ProductStockDto(22L,5,50000L));
+
         orderService.order(1L, order);
 
         ModifyOrderItem modifyOrderItem = new ModifyOrderItem(1L, 5);
@@ -207,7 +224,6 @@ class OrderServiceTest {
 
         return OrderItem.Builder.builder()
                 .productId(productId)
-                .price(price)
                 .discountRate(0)
                 .count(count)
                 .build()

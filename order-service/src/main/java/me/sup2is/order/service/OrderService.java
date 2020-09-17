@@ -29,13 +29,19 @@ public class OrderService {
     private final ProductServiceClient productServiceClient;
 
     public void order(Long memberId, Order order) throws OutOfStockException {
-        for (OrderItem orderItem : order.getOrderItems())
-            cachedProductStockService.checkItemStock(orderItem);
+        for (OrderItem orderItem : order.getOrderItems()) {
+            ProductStockDto cachedProductStock = cachedProductStockService.getCachedProductStock(orderItem.getProductId());
+            if(cachedProductStock.getStock() < orderItem.getCount()) {
+                throw new OutOfStockException("product ID : " + orderItem.getProductId() + " stock is lack");
+            }
+
+            orderItem.setPrice(cachedProductStock.getPrice());
+        }
 
         order.setMemberId(memberId);
+        order.setTotalPrice();
 
         paymentModuleClient.payment();
-
         orderItemService.addItems(order.getOrderItems());
         orderRepository.save(order);
         productServiceClient.modifyStock(ProductStockDto.createDtoByOrderItems(order.getOrderItems()));
@@ -65,8 +71,12 @@ public class OrderService {
             throw new IllegalAccessException("current user is not the owner of this order");
         }
 
-        for (ModifyOrderItem modifyOrderItem : modifyOrderItems)
-            cachedProductStockService.checkItemStock(modifyOrderItem);
+        for (ModifyOrderItem modifyOrderItem : modifyOrderItems) {
+            ProductStockDto cachedProductStock = cachedProductStockService.getCachedProductStock(modifyOrderItem.getProductId());
+            if(cachedProductStock.getStock() < modifyOrderItem.getCount()) {
+                throw new OutOfStockException("product ID : " + modifyOrderItem.getProductId() + " stock is lack");
+            }
+        }
 
         order.updateAddress(newAddress);
 
@@ -77,6 +87,8 @@ public class OrderService {
                 }
             }
         }
+
+        order.setTotalPrice();
     }
 
     public List<Order> findAll(PageRequest orderPageRequest, Long memberId) {

@@ -223,6 +223,9 @@ class OrderControllerTest {
         OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
         OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
 
+        orderItem1.setPrice(10000L);
+        orderItem2.setPrice(50000L);
+
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
         Order order = Order.Builder.builder()
@@ -230,6 +233,8 @@ class OrderControllerTest {
                 .address("주문하는 주소")
                 .build()
                 .toEntity();
+
+        order.setTotalPrice();
 
         FieldUtils.writeField(order, "memberId", 1L, true);
 
@@ -279,6 +284,9 @@ class OrderControllerTest {
         OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
         OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
 
+        orderItem1.setPrice(10000L);
+        orderItem2.setPrice(50000L);
+
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
         Order order = Order.Builder.builder()
@@ -295,7 +303,10 @@ class OrderControllerTest {
 
         FieldUtils.writeField(order, "memberId", 1L, true);
         FieldUtils.writeField(order2, "memberId", 1L, true);
+        FieldUtils.writeField(order2, "memberId", 1L, true);
 
+        order.setTotalPrice();
+        order2.setTotalPrice();
 
         PageRequest orderPageRequest = OrderPageRequestDto.createOrderPageRequest(0, 5);
 
@@ -347,7 +358,6 @@ class OrderControllerTest {
 
         return OrderItem.Builder.builder()
                 .productId(productId)
-                .price(price)
                 .discountRate(0)
                 .count(count)
                 .build()

@@ -30,7 +30,6 @@ class OrderItemServiceTest {
         //given
         OrderItem orderItem1 = OrderItem.Builder.builder()
                 .productId(1L)
-                .price(10000L)
                 .discountRate(0)
                 .count(2)
                 .build()
@@ -38,7 +37,6 @@ class OrderItemServiceTest {
 
         OrderItem orderItem2 = OrderItem.Builder.builder()
                 .productId(1L)
-                .price(10000L)
                 .discountRate(0)
                 .count(2)
                 .build()

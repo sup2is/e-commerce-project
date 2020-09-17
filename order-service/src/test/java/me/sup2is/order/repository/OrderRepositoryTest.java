@@ -42,13 +42,21 @@ class OrderRepositoryTest {
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
 
-        Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
-        orderBuilder.orderItems(orderItems)
-                .address("주문하는 주소");
 
-        Order order = Order.createOrder(orderBuilder);
-        Order order2 = Order.createOrder(orderBuilder);
+
+        Order order = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
+
+        Order order2 = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
+
         FieldUtils.writeField(order, "memberId", 1L, true);
         FieldUtils.writeField(order2, "memberId", 1L, true);
 

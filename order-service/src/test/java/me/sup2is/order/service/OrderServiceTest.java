@@ -67,12 +67,13 @@ class OrderServiceTest {
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
-        Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
-        orderBuilder.orderItems(orderItems)
-                .address("주문하는 주소");
 
-        Order order = Order.createOrder(orderBuilder);
+        Order order = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
 
         //when
         orderService.order(1L, order);
@@ -108,12 +109,13 @@ class OrderServiceTest {
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
-        Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
-        orderBuilder.orderItems(orderItems)
-                .address("주문하는 주소");
 
-        Order order = Order.createOrder(orderBuilder);
+        Order order = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
 
         doThrow(new OutOfStockException(""))
                 .when(cachedProductStockService)
@@ -132,12 +134,14 @@ class OrderServiceTest {
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
-        Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
-        orderBuilder.orderItems(orderItems)
-                .address("주문하는 주소");
 
-        Order order = Order.createOrder(orderBuilder);
+        Order order = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
+
         orderService.order(1L, order);
 
         //when
@@ -157,12 +161,14 @@ class OrderServiceTest {
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
-        Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
-        orderBuilder.orderItems(orderItems)
-                .address("주문하는 주소");
 
-        Order order = Order.createOrder(orderBuilder);
+        Order order = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
+
         orderService.order(1L, order);
 
         //when
@@ -182,12 +188,14 @@ class OrderServiceTest {
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
 
-        Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
-        orderBuilder.orderItems(orderItems)
-                .address("주문하는 주소");
 
-        Order order = Order.createOrder(orderBuilder);
+        Order order = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
+
         orderService.order(1L, order);
 
         ModifyOrderItem modifyOrderItem = new ModifyOrderItem(1L, 5);

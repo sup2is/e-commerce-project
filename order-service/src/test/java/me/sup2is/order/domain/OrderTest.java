@@ -22,13 +22,15 @@ class OrderTest {
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
-        Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
-        orderBuilder.orderItems(orderItems)
-                .address("주문하는 주소");
+
 
         //when
-        Order order = Order.createOrder(orderBuilder);
+        Order order = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
 
         //then
         assertEquals(60000L, order.getTotalPrice());
@@ -46,13 +48,15 @@ class OrderTest {
         OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
         OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
 
-        Order.Builder orderBuilder = new Order.Builder();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
-        orderBuilder.orderItems(orderItems)
-                .address("주문하는 주소");
 
         //when
-        Order order = Order.createOrder(orderBuilder);
+        Order order = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
+
 
         //then
         assertEquals(54000L, order.getTotalPrice());

@@ -22,12 +22,14 @@ public class OrderRequestDto {
     private List<OrderItemRequestDto> orderItems;
 
     public Order toEntity() {
-        Order.Builder builder = new Order.Builder();
-        builder.address(address);
         List<OrderItem> items = orderItems.stream()
                 .map(OrderItemRequestDto::toEntity)
                 .collect(Collectors.toList());
-        builder.orderItems(items);
-        return Order.createOrder(builder);
+
+        return Order.Builder.builder()
+                .address(address)
+                .orderItems(items)
+                .build()
+                .toEntity();
     }
 }

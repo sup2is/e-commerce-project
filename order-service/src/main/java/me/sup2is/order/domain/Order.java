@@ -1,6 +1,7 @@
 package me.sup2is.order.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.sup2is.order.domain.audit.AuditTime;
@@ -45,7 +46,9 @@ public class Order extends AuditTime{
     }
 
     public static Order createOrder(Builder builder) {
-        Order order = builder.build();
+        Order order = new Order();
+        order.orderItems = builder.orderItems;
+        order.address = builder.address;
 
         order.orderStatus = OrderStatus.ORDER;
         for (OrderItem orderItem : order.orderItems)
@@ -78,27 +81,16 @@ public class Order extends AuditTime{
         this.address = newAddress;
     }
 
+    @lombok.Builder
     public static class Builder {
 
         private String address;
 
         private List<OrderItem> orderItems;
 
-        public Builder orderItems(List<OrderItem> orderItems) {
-            this.orderItems = orderItems;
-            return this;
+        public Order toEntity() {
+            return Order.createOrder(this);
         }
 
-        public Builder address(String address) {
-            this.address = address;
-            return this;
-        }
-
-        private Order build() {
-            Order order = new Order();
-            order.orderItems = this.orderItems;
-            order.address = this.address;
-            return order;
-        }
     }
 }

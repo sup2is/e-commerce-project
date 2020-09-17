@@ -26,8 +26,7 @@ class MemberServiceTest {
     @Test
     public void find_one() throws DuplicateMemberException {
         //given
-        Member.Builder builder = new Member.Builder();
-        Member member = getMember(builder, "서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
+        Member member = getMember("서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
 
         memberService.save(member);
 
@@ -50,11 +49,10 @@ class MemberServiceTest {
     @Test
     public void save_duplicate_email() throws DuplicateMemberException {
         //given
-        Member.Builder builder = new Member.Builder();
-        Member member = getMember(builder, "서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
+        Member member = getMember("서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
 
         memberService.save(member);
-        Member newMember = getMember(builder, "서울시 강남구2222", "sup2is222", "qwer!23222", "010-3132-1089", 12345);
+        Member newMember = getMember("서울시 강남구2222", "sup2is222", "qwer!23222", "010-3132-1089", 12345);
 
         //when
         //then
@@ -65,8 +63,7 @@ class MemberServiceTest {
     @Test
     public void modify() throws DuplicateMemberException {
         //given
-        Member.Builder builder = new Member.Builder();
-        Member member = getMember(builder, "서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
+        Member member = getMember("서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
 
         memberService.save(member);
 
@@ -86,14 +83,17 @@ class MemberServiceTest {
 
     }
 
-    private Member getMember(Member.Builder builder, String address, String sup2is, String password, String phone, int zipCode) {
-        return Member.createMember(builder.address(address)
+    private Member getMember(String address, String sup2is, String password, String phone, int zipCode) {
+        return Member.Builder.builder()
+                .address(address)
                 .email("dev.sup2is@gmail.com")
                 .name(sup2is)
                 .password(password)
                 .phone(phone)
                 .zipCode(zipCode)
-                .authorities(Arrays.asList("MEMBER")));
+                .authorities(Arrays.asList("MEMBER"))
+                .build()
+                .toEntity();
     }
 
 }

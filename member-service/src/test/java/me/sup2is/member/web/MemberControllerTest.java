@@ -147,8 +147,16 @@ class MemberControllerTest {
         String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
 
 
-        Member.Builder builder = new Member.Builder();
-        Member member = getMember(builder, email,"서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
+        Member member = Member.Builder.builder()
+                .address("서울시 강남구")
+                .email(email)
+                .name("sup2is")
+                .password("qwer!23")
+                .phone("010-3132-1089")
+                .zipCode(65482)
+                .authorities(Arrays.asList("MEMBER"))
+                .build()
+                .toEntity();
 
         when(memberService.findByEmail(email))
                 .thenReturn(member);
@@ -176,16 +184,5 @@ class MemberControllerTest {
                                 fieldWithPath("data.phone").description("휴대폰 번호")
                         )
                 ));
-    }
-
-
-    private Member getMember(Member.Builder builder, String email, String address, String sup2is, String password, String phone, int zipCode) {
-        return Member.createMember(builder.address(address)
-                .email(email)
-                .name(sup2is)
-                .password(password)
-                .phone(phone)
-                .zipCode(zipCode)
-                .authorities(Arrays.asList("MEMBER")));
     }
 }

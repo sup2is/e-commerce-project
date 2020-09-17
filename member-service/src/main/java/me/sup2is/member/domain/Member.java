@@ -1,6 +1,7 @@
 package me.sup2is.member.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.sup2is.member.domain.dto.ModifyMember;
@@ -40,11 +41,18 @@ public class Member {
     private boolean enable;
 
     public static Member createMember(Builder builder) {
-        Member member = builder.build();
-
+        Member member = new Member();
+        member.email = builder.email;
+        member.password = builder.password;
+        member.name = builder.name;
+        member.address = builder.address;
+        member.zipCode = builder.zipCode;
+        member.phone = builder.phone;
+        member.enable = builder.enable;
         //todo role 구분해야함 일단 member로 지정
-        member.authorities = Arrays.asList(Authority.createAuthority(member, Auth.MEMBER));
-
+        member.authorities = builder.authorities.stream()
+                .map(a -> Authority.createAuthority(member, Auth.valueOf(a)))
+                .collect(Collectors.toList());
         return member;
     }
 
@@ -60,6 +68,7 @@ public class Member {
         this.zipCode = modifyMember.getZipCode();
     }
 
+    @lombok.Builder
     public static class Builder {
 
         private String email;
@@ -71,59 +80,8 @@ public class Member {
         private boolean enable;
         private List<String> authorities;
 
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public Builder password(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder address(String address) {
-            this.address = address;
-            return this;
-        }
-
-        public Builder zipCode(int zipCode) {
-            this.zipCode = zipCode;
-            return this;
-        }
-
-        public Builder phone(String phone) {
-            this.phone = phone;
-            return this;
-        }
-
-        public Builder enable(boolean enable) {
-            this.enable = enable;
-            return this;
-        }
-
-        public Builder authorities(List<String> authorities) {
-            this.authorities = authorities;
-            return this;
-        }
-
-        private Member build() {
-            Member member = new Member();
-            member.email = this.email;
-            member.password = this.password;
-            member.name = this.name;
-            member.address = this.address;
-            member.zipCode = this.zipCode;
-            member.phone = this.phone;
-            member.enable = this.enable;
-            member.authorities = this.authorities.stream()
-                    .map(a -> Authority.createAuthority(member, Auth.valueOf(a)))
-                    .collect(Collectors.toList());
-            return member;
+        public Member toEntity() {
+            return Member.createMember(this);
         }
     }
 }

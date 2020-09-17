@@ -43,15 +43,16 @@ class CredentialControllerTest {
         //given
         String email = "choi@example.com";
 
-        Member.Builder builder = new Member.Builder();
-        Member member = Member.createMember(builder.email(email)
-                .address("서울 강남")
-                .name("choi")
+        Member member = Member.Builder.builder()
+                .address("서울시 강남구")
+                .email(email)
+                .name("sup2is")
                 .password("qwer!23")
                 .phone("010-3132-1089")
-                .zipCode(12345)
-                .enable(true)
-                .authorities(Arrays.asList("MEMBER")));
+                .zipCode(65482)
+                .authorities(Arrays.asList("MEMBER"))
+                .build()
+                .toEntity();
 
         FieldUtils.writeField(member, "id", 1L, true);
 

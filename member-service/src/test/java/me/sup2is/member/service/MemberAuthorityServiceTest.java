@@ -33,14 +33,17 @@ class MemberAuthorityServiceTest {
     @Test
     public void find_one() throws DuplicateMemberException {
         //given
-        Member.Builder builder = new Member.Builder();
-        Member member = Member.createMember(builder.address("서울시 강남구")
-                                                    .email("dev.sup2is@gmail.com")
-                                                    .name("sup2is")
-                                                    .password("qwer!23")
-                                                    .phone("010-3132-1089")
-                                                    .zipCode(65482)
-                                                    .authorities(Arrays.asList("MEMBER")));
+        //given
+        Member member = Member.Builder.builder()
+                .address("서울시 강남구")
+                .email("dev.sup2is@gmail.com")
+                .name("sup2is")
+                .password("qwer!23")
+                .phone("010-3132-1089")
+                .zipCode(65482)
+                .authorities(Arrays.asList("MEMBER"))
+                .build()
+                .toEntity();
 
         memberService.save(member);
 

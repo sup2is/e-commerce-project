@@ -35,13 +35,14 @@ public class MemberRequestDto {
     private String phone;
 
     public Member toEntity() {
-        Member.Builder builder = new Member.Builder();
-        return Member.createMember(builder.email(email)
+        return Member.Builder.builder()
                 .zipCode(zipCode)
                 .phone(phone)
                 .password(password)
                 .address(address)
                 .name(name)
-                .authorities(Arrays.asList("MEMBER")));
+                .authorities(Arrays.asList("MEMBER"))
+                .build()
+                .toEntity();
     }
 }

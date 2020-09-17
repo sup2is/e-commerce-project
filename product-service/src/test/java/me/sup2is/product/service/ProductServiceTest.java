@@ -91,7 +91,7 @@ class ProductServiceTest {
         Mockito.when(categoryService.findAllByNames(categoryNames)).thenReturn(categories);
         productService.register(1L, product, productRequestDto.getCategories());
 
-        ProductStockDto productStockDto = new ProductStockDto(product.getId(), -2);
+        ProductStockDto productStockDto = new ProductStockDto(product.getId(), -2, 50000L);
         productService.modifyStock(Arrays.asList(productStockDto));
 
         //when

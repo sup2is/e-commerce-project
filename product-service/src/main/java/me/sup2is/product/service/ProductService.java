@@ -32,7 +32,7 @@ public class ProductService {
                 .collect(Collectors.toList());
         product.classifyCategories(productCategories);
         productCategoryService.save(productCategories);
-        productStockService.insertStock(new ProductStockDto(product.getId(), product.getStock()));
+        productStockService.insertStock(new ProductStockDto(product.getId(), product.getStock(), product.getPrice()));
     }
 
     public Product findOne(Long id) {
@@ -43,7 +43,7 @@ public class ProductService {
         for (ProductStockDto stockDto : productStockDto) {
             Product p = findOne(stockDto.getProductId());
             p.modifyStock(stockDto.getStock());
-            productStockService.insertStock(new ProductStockDto(p.getId(), p.getStock()));
+            productStockService.insertStock(new ProductStockDto(p.getId(), p.getStock(), p.getPrice()));
         }
     }
 

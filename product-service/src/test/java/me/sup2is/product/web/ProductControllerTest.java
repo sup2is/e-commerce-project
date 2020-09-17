@@ -126,8 +126,8 @@ class ProductControllerTest {
     public void modify_stock() throws Exception {
         //given
 
-        ProductStockDto productStockDto1 = new ProductStockDto(1, 5);
-        ProductStockDto productStockDto2 = new ProductStockDto(2, -2);
+        ProductStockDto productStockDto1 = new ProductStockDto(1, 5, 50000L);
+        ProductStockDto productStockDto2 = new ProductStockDto(2, -2, 50000L);
 
         String email = "test@example.com";
         MemberDto memberDto = getMemberDto(email);

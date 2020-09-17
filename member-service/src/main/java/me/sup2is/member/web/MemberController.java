@@ -50,6 +50,14 @@ public class MemberController {
         return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
     }
 
+    @GetMapping("/")
+    public ResponseEntity<JsonResult<?>> getMember(HttpServletRequest request) {
+        String email = getEmailByToken(request.getHeader(HttpHeaders.AUTHORIZATION));
+        Member member = memberService.findByEmail(email);
+        return ResponseEntity.ok(new JsonResult<>(MemberResponseDto.createMemberResponseDto(member)));
+    }
+
+
     private String getEmailByToken(String header) {
         String accessToken = extractTokenFromHeader(header);
         return extractEmailFromToken(accessToken);

@@ -139,6 +139,46 @@ class MemberControllerTest {
                 ));
     }
 
+    @Test
+    public void get_member() throws Exception {
+        //given
+
+        String email = "test@example.com";
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
+
+        Member.Builder builder = new Member.Builder();
+        Member member = getMember(builder, email,"서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
+
+        when(memberService.findByEmail(email))
+                .thenReturn(member);
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/")
+                .header(org.apache.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().is(200))
+                .andDo(document("get-member",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                        ),
+                        responseFields(
+                                fieldWithPath("result").description("API 요청 결과 SUCCESS / FAIL"),
+                                fieldWithPath("messages").description("API 요청 메시지"),
+                                fieldWithPath("error").description("API 요청 에러"),
+                                fieldWithPath("fieldErrors").description("API form validation 에러"),
+                                fieldWithPath("data").description("API 요청 데이터"),
+                                fieldWithPath("data.email").description("회원 이메일"),
+                                fieldWithPath("data.address").description("회원 주소"),
+                                fieldWithPath("data.zipCode").description("우편번호"),
+                                fieldWithPath("data.name").description("회원명"),
+                                fieldWithPath("data.phone").description("휴대폰 번호")
+                        )
+                ));
+    }
+
+
     private Member getMember(Member.Builder builder, String email, String address, String sup2is, String password, String phone, int zipCode) {
         return Member.createMember(builder.address(address)
                 .email(email)

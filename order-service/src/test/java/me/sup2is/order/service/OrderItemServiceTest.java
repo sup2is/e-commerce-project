@@ -28,13 +28,22 @@ class OrderItemServiceTest {
     @DisplayName("주문 취소시 하위 item 들도 CANCEL상태 인지 확인")
     public void cancel_order() {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
+        OrderItem orderItem1 = OrderItem.Builder.builder()
+                .productId(1L)
                 .price(10000L)
                 .discountRate(0)
-                .count(2);
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
+                .count(2)
+                .build()
+                .toEntity();
+
+        OrderItem orderItem2 = OrderItem.Builder.builder()
+                .productId(1L)
+                .price(10000L)
+                .discountRate(0)
+                .count(2)
+                .build()
+                .toEntity();
+
         List<OrderItem> items = Arrays.asList(orderItem1, orderItem2);
         orderItemService.addItems(items);
         //when

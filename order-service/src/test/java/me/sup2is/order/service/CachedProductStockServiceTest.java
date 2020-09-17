@@ -29,12 +29,13 @@ class CachedProductStockServiceTest {
     @DisplayName("상품 재고를 redis에서 체크")
     public void check_item_stock() throws OutOfStockException {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
+        OrderItem orderItem = OrderItem.Builder.builder()
+                .productId(1L)
                 .price(10000L)
                 .discountRate(0)
-                .count(2);
-        OrderItem orderItem = OrderItem.createOrderItem(itemBuilder);
+                .count(2)
+                .build()
+                .toEntity();
 
         ProductStockDto productStockDto = new ProductStockDto(1L, 5);
 
@@ -51,12 +52,13 @@ class CachedProductStockServiceTest {
     @DisplayName("상품 재고를 redis에서 체크 & 재고 부족으로 OutOfStockException()")
     public void lacked_item_stock() {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
+        OrderItem orderItem = OrderItem.Builder.builder()
+                .productId(1L)
                 .price(10000L)
                 .discountRate(0)
-                .count(2);
-        OrderItem orderItem = OrderItem.createOrderItem(itemBuilder);
+                .count(2)
+                .build()
+                .toEntity();
 
         ProductStockDto productStockDto = new ProductStockDto(1L, 1);
 
@@ -73,12 +75,13 @@ class CachedProductStockServiceTest {
     @DisplayName("상품 재고를 redis에서 체크 & redis에 해당 key가 없을때 IllegalArgumentException()")
     public void product_id_not_found() {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
+        OrderItem orderItem = OrderItem.Builder.builder()
+                .productId(1L)
                 .price(10000L)
                 .discountRate(0)
-                .count(2);
-        OrderItem orderItem = OrderItem.createOrderItem(itemBuilder);
+                .count(2)
+                .build()
+                .toEntity();
 
         ProductStockDto productStockDto = new ProductStockDto(1L, 1);
 

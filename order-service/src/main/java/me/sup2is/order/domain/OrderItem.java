@@ -1,6 +1,7 @@
 package me.sup2is.order.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.sup2is.order.domain.audit.AuditTime;
@@ -33,7 +34,11 @@ public class OrderItem extends AuditTime {
     private OrderStatus orderStatus;
 
     public static OrderItem createOrderItem(Builder builder) {
-        OrderItem orderItem = builder.build();
+        OrderItem orderItem = new OrderItem();
+        orderItem.count = builder.count;
+        orderItem.productId = builder.productId;
+        orderItem.price = builder.price;
+        orderItem.discountRate = builder.discountRate;
         orderItem.orderStatus = OrderStatus.ORDER;
         return orderItem;
     }
@@ -57,6 +62,7 @@ public class OrderItem extends AuditTime {
         this.count = count;
     }
 
+    @lombok.Builder
     public static class Builder {
 
         private Long productId;
@@ -67,35 +73,9 @@ public class OrderItem extends AuditTime {
 
         private Integer discountRate;
 
-        public Builder productId(Long productId) {
-            this.productId = productId;
-            return this;
+        public OrderItem toEntity() {
+            return OrderItem.createOrderItem(this);
         }
-
-        public Builder price(Long price) {
-            this.price = price;
-            return this;
-        }
-
-        public Builder count(Integer count) {
-            this.count = count;
-            return this;
-        }
-
-        public Builder discountRate(Integer discountRate) {
-            this.discountRate = discountRate;
-            return this;
-        }
-
-        private OrderItem build() {
-            OrderItem orderItem = new OrderItem();
-            orderItem.count = this.count;
-            orderItem.productId = this.productId;
-            orderItem.price = this.price;
-            orderItem.discountRate = this.discountRate;
-            return orderItem;
-        }
-
     }
 
 }

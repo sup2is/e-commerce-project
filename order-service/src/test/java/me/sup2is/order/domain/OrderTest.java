@@ -14,14 +14,21 @@ class OrderTest {
     @DisplayName("orderItems들 총합 totalPrice 계산")
     public void calculate_total_price() {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
+        OrderItem orderItem1 = OrderItem.Builder.builder()
+                .productId(1L)
                 .price(10000L)
                 .discountRate(0)
-                .count(3);
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
+                .count(2)
+                .build()
+                .toEntity();
 
+        OrderItem orderItem2 = OrderItem.Builder.builder()
+                .productId(22L)
+                .price(50000L)
+                .discountRate(0)
+                .count(1)
+                .build()
+                .toEntity();
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
 
@@ -33,20 +40,28 @@ class OrderTest {
                 .toEntity();
 
         //then
-        assertEquals(60000L, order.getTotalPrice());
+        assertEquals(70000L, order.getTotalPrice());
     }
 
     @Test
     @DisplayName("orderItems들 총합 totalPrice 계산 & 할인율 계산")
     public void calculate_discount_rate() {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
+        OrderItem orderItem1 = OrderItem.Builder.builder()
+                .productId(1L)
                 .price(10000L)
+                .discountRate(0)
+                .count(2)
+                .build()
+                .toEntity();
+
+        OrderItem orderItem2 = OrderItem.Builder.builder()
+                .productId(22L)
+                .price(50000L)
                 .discountRate(10)
-                .count(3);
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
+                .count(1)
+                .build()
+                .toEntity();
 
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
@@ -57,9 +72,8 @@ class OrderTest {
                 .build()
                 .toEntity();
 
-
         //then
-        assertEquals(54000L, order.getTotalPrice());
+        assertEquals(65000L, order.getTotalPrice());
 
     }
 

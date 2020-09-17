@@ -22,12 +22,13 @@ public class OrderItemRequestDto {
     private Integer discountRate;
 
     public OrderItem toEntity() {
-        OrderItem.Builder builder = new OrderItem.Builder();
-        builder.count(count)
+        return OrderItem.Builder.builder()
+                .count(count)
                 .discountRate(discountRate)
                 .price(price)
-                .productId(productId);
-        return OrderItem.createOrderItem(builder);
+                .productId(productId)
+                .build()
+                .toEntity();
     }
 
 }

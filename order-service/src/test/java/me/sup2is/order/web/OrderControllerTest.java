@@ -220,13 +220,8 @@ class OrderControllerTest {
         String email = "test@example.com";
         String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
 
-        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
-
-        OrderItem.Builder itemBuilder2 = getBuilder(22L, 50000L, 1);
-
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
-
+        OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
+        OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
 
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
@@ -281,11 +276,8 @@ class OrderControllerTest {
         String email = "test@example.com";
         String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
 
-        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
-        OrderItem.Builder itemBuilder2 = getBuilder(22L, 50000L, 1);
-
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
+        OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
+        OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
 
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
@@ -351,13 +343,16 @@ class OrderControllerTest {
                     );
     }
 
-    private OrderItem.Builder getBuilder(long productId, long price, int count) {
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(productId)
+    private OrderItem getOrderItem(long productId, long price, int count) {
+
+        return OrderItem.Builder.builder()
+                .productId(productId)
                 .price(price)
                 .discountRate(0)
-                .count(count);
-        return itemBuilder;
+                .count(count)
+                .build()
+                .toEntity();
+
     }
 
     private MemberDto getMemberDto(String email) {

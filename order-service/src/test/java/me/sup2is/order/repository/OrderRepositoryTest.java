@@ -27,20 +27,21 @@ class OrderRepositoryTest {
     @Test
     public void find_all_by_member_id() throws IllegalAccessException {
         //given
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(1L)
+        OrderItem orderItem1 = OrderItem.Builder.builder()
+                .productId(1L)
                 .price(10000L)
                 .discountRate(0)
-                .count(2);
+                .count(2)
+                .build()
+                .toEntity();
 
-        OrderItem.Builder itemBuilder2 = new OrderItem.Builder();
-        itemBuilder2.productId(22L)
+        OrderItem orderItem2 = OrderItem.Builder.builder()
+                .productId(22L)
                 .price(50000L)
                 .discountRate(0)
-                .count(1);
-
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
+                .count(1)
+                .build()
+                .toEntity();
 
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 

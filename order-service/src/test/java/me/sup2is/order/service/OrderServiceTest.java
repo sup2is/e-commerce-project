@@ -63,9 +63,8 @@ class OrderServiceTest {
     @DisplayName("정상적인 order와 orderItems의 save")
     public void save() throws OutOfStockException {
         //given
-        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
+        OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
+        OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
 
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
@@ -82,7 +81,7 @@ class OrderServiceTest {
         Order findOrder = orderRepository.findById(order.getId()).get();
 
         assertEquals(order, findOrder);
-        assertEquals(40000, order.getTotalPrice());
+        assertEquals(70000L, order.getTotalPrice());
         assertEquals(OrderStatus.ORDER, order.getOrderStatus());
         assertEquals(order, orderItem1.getOrder());
         assertEquals(order, orderItem2.getOrder());
@@ -104,10 +103,8 @@ class OrderServiceTest {
     @DisplayName("재고부족으로 주문 실패")
     public void reject_save() throws OutOfStockException {
         //given
-        //given
-        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
+        OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
+        OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
 
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
@@ -130,9 +127,8 @@ class OrderServiceTest {
     @DisplayName("주문 취소")
     public void cancel() throws OutOfStockException, CancelFailureException, OrderNotFoundException, IllegalAccessException {
         //given
-        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
+        OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
+        OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
 
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
@@ -157,9 +153,8 @@ class OrderServiceTest {
     @DisplayName("주문 취소요청시 다른유저의 주문에 접근")
     public void cancel_illegal_access() throws OutOfStockException {
         //given
-        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder);
+        OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
+        OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
 
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
@@ -181,12 +176,8 @@ class OrderServiceTest {
     @DisplayName("주문 수문 수정")
     public void modify() throws OutOfStockException, OrderNotFoundException, IllegalAccessException {
         //given
-        OrderItem.Builder itemBuilder = getBuilder(1L, 10000L, 2);
-
-        OrderItem.Builder itemBuilder2 = getBuilder(22L, 50000L, 1);
-
-        OrderItem orderItem1 = OrderItem.createOrderItem(itemBuilder);
-        OrderItem orderItem2 = OrderItem.createOrderItem(itemBuilder2);
+        OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
+        OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
 
         List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
 
@@ -212,13 +203,16 @@ class OrderServiceTest {
 
     }
 
-    private OrderItem.Builder getBuilder(long productId, long price, int count) {
-        OrderItem.Builder itemBuilder = new OrderItem.Builder();
-        itemBuilder.productId(productId)
+    private OrderItem getOrderItem(long productId, long price, int count) {
+
+        return OrderItem.Builder.builder()
+                .productId(productId)
                 .price(price)
                 .discountRate(0)
-                .count(count);
-        return itemBuilder;
+                .count(count)
+                .build()
+                .toEntity();
+
     }
 
 

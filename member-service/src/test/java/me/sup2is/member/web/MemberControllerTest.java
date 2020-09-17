@@ -1,40 +1,35 @@
 package me.sup2is.member.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javassist.bytecode.DuplicateMemberException;
+import me.sup2is.jwt.JwtTokenUtil;
+import me.sup2is.member.config.RestDocsConfiguration;
 import me.sup2is.member.domain.Member;
 import me.sup2is.member.domain.dto.MemberRequestDto;
 import me.sup2is.member.service.MemberService;
-import me.sup2is.web.ErrorMessage;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.validation.FieldError;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doAnswer;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static reactor.core.publisher.Mono.when;
 
 @WebMvcTest(excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@AutoConfigureRestDocs
+@Import({RestDocsConfiguration.class, JwtTokenUtil.class})
 class MemberControllerTest {
 
     @Autowired
@@ -57,15 +52,23 @@ class MemberControllerTest {
                     , 123
                     , "010-1234-1234");
 
-        Member member = memberRequestDto.toEntity();
-
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/")
-                    .content(objectMapper.writeValueAsString(member))
+                    .content(objectMapper.writeValueAsString(memberRequestDto))
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("save-member",
+                        requestFields(
+                                fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일 (중복 X)"),
+                                fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호 (최소 6자리)"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름 or 닉네임"),
+                                fieldWithPath("address").type(JsonFieldType.STRING).description("회원주소"),
+                                fieldWithPath("zipCode").type(JsonFieldType.NUMBER).description("우편번호"),
+                                fieldWithPath("phone").type(JsonFieldType.STRING).description("휴대폰 번호")
+                        )
+                ));
     }
 
     @Test
@@ -79,12 +82,10 @@ class MemberControllerTest {
                     , 123
                     , "12341234");
 
-        Member member = memberRequestDto.toEntity();
-
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/")
-                    .content(objectMapper.writeValueAsString(member))
+                    .content(objectMapper.writeValueAsString(memberRequestDto))
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is(400));

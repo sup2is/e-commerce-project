@@ -1,0 +1,17 @@
+= Member Service
+:sectnums:
+:toc: left
+:toclevels: 4
+:toc-title: My Content
+
+※ Spring Cloud 환경에서 Order Service에 대한 모든 요청은 JWT 토큰 必
+
+
+== 회원 등록
+
+include::{snippets}/save-member/http-request.adoc[]
+include::{snippets}/save-member/request-fields.adoc[]
+
+== 회원 수정
+
+== 회원 정보

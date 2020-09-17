@@ -4,8 +4,12 @@ package me.sup2is.member.domain.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.sup2is.member.domain.Member;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
@@ -16,7 +20,7 @@ public class MemberRequestDto {
     private String email;
 
     @NotEmpty(message = "password must not be null")
-    @Min(value = 6, message = "password must be greater than {value}")
+    @Length(min = 6, message = "password must be greater than {min}")
     private String password;
 
     @NotEmpty(message = "name must not be null")
@@ -27,7 +31,7 @@ public class MemberRequestDto {
     private int zipCode;
 
     @NotEmpty(message = "phone must not be null")
-    @Pattern(regexp="(^$|[0-9]{10})", message = "phone format is 010-xxxx-xxxx")
+    @Pattern(regexp="^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$", message = "phone format is 010-xxxx-xxxx")
     private String phone;
 
     public Member toEntity() {
@@ -37,6 +41,7 @@ public class MemberRequestDto {
                 .phone(phone)
                 .password(password)
                 .address(address)
-                .name(name));
+                .name(name)
+                .authorities(Arrays.asList("MEMBER")));
     }
 }

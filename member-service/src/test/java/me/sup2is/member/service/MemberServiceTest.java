@@ -2,25 +2,15 @@ package me.sup2is.member.service;
 
 import javassist.bytecode.DuplicateMemberException;
 import me.sup2is.member.domain.Member;
+import me.sup2is.member.domain.dto.ModifyMember;
 import me.sup2is.member.exception.MemberNotFoundException;
-import me.sup2is.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,13 +27,7 @@ class MemberServiceTest {
     public void find_one() throws DuplicateMemberException {
         //given
         Member.Builder builder = new Member.Builder();
-        Member member = Member.createMember(builder.address("서울시 강남구")
-                                                    .email("dev.sup2is@gmail.com")
-                                                    .name("sup2is")
-                                                    .password("qwer!23")
-                                                    .phone("010-3132-1089")
-                                                    .zipCode(65482)
-                                                    .authorities(Arrays.asList("MEMBER")));
+        Member member = getMember(builder, "서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
 
         memberService.save(member);
 
@@ -67,26 +51,49 @@ class MemberServiceTest {
     public void save_duplicate_email() throws DuplicateMemberException {
         //given
         Member.Builder builder = new Member.Builder();
-        Member member = Member.createMember(builder.address("서울시 강남구")
-                .email("dev.sup2is@gmail.com")
-                .name("sup2is")
-                .password("qwer!23")
-                .phone("010-3132-1089")
-                .zipCode(65482)
-                .authorities(Arrays.asList("MEMBER")));
+        Member member = getMember(builder, "서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
 
         memberService.save(member);
-        Member newMember = Member.createMember(builder.address("서울시 강남구2222")
-                .email("dev.sup2is@gmail.com")
-                .name("sup2is222")
-                .password("qwer!23222")
-                .phone("010-3132-1089")
-                .zipCode(65482)
-                .authorities(Arrays.asList("MEMBER")));
+        Member newMember = getMember(builder, "서울시 강남구2222", "sup2is222", "qwer!23222", "010-3132-1089", 12345);
 
         //when
         //then
         assertThrows(DuplicateMemberException.class, () -> memberService.save(newMember));
+    }
+
+
+    @Test
+    public void modify() throws DuplicateMemberException {
+        //given
+        Member.Builder builder = new Member.Builder();
+        Member member = getMember(builder, "서울시 강남구", "sup2is", "qwer!23", "010-3132-1089", 12345);
+
+        memberService.save(member);
+
+        ModifyMember modifyMember
+                = new ModifyMember("aaaaaaa123", "변경될 이름", "변경될 주소", 12345, "010-3132-1111");
+
+        //when
+        memberService.modify(member.getEmail(), modifyMember);
+
+        //then
+        Member findMember = memberService.findOne(member.getId());
+        assertEquals(modifyMember.getAddress(), findMember.getAddress());
+        assertEquals(modifyMember.getName(), findMember.getName());
+        assertEquals(modifyMember.getPassword(), findMember.getPassword());
+        assertEquals(modifyMember.getPhone(), findMember.getPhone());
+        assertEquals(modifyMember.getZipCode(), findMember.getZipCode());
+
+    }
+
+    private Member getMember(Member.Builder builder, String address, String sup2is, String password, String phone, int zipCode) {
+        return Member.createMember(builder.address(address)
+                .email("dev.sup2is@gmail.com")
+                .name(sup2is)
+                .password(password)
+                .phone(phone)
+                .zipCode(zipCode)
+                .authorities(Arrays.asList("MEMBER")));
     }
 
 }

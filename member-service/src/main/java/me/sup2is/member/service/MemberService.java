@@ -4,6 +4,7 @@ import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.member.domain.Authority;
 import me.sup2is.member.domain.Member;
+import me.sup2is.member.domain.dto.ModifyMember;
 import me.sup2is.member.exception.MemberNotFoundException;
 import me.sup2is.member.repository.MemberRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -43,5 +44,10 @@ public class MemberService {
     public Member findByEmail(String email) throws UsernameNotFoundException {
         return memberRepository.findByEmail(email).orElseThrow(
                 () -> new MemberNotFoundException("member not found"));
+    }
+
+    public void modify(String email, ModifyMember modifyMember) {
+        Member member = findByEmail(email);
+        member.modify(modifyMember);
     }
 }

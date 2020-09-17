@@ -3,6 +3,7 @@ package me.sup2is.member.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.sup2is.member.domain.dto.ModifyMember;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -49,6 +50,14 @@ public class Member {
 
     public void encryptPassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
+    }
+
+    public void modify(ModifyMember modifyMember) {
+        this.password = modifyMember.getPassword();
+        this.address = modifyMember.getAddress();
+        this.name = modifyMember.getName();
+        this.phone = modifyMember.getPhone();
+        this.zipCode = modifyMember.getZipCode();
     }
 
     public static class Builder {

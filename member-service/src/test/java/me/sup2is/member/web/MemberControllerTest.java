@@ -1,9 +1,12 @@
 package me.sup2is.member.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.discovery.converters.Auto;
+import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.member.config.RestDocsConfiguration;
 import me.sup2is.member.domain.Member;
+import me.sup2is.member.domain.dto.MemberModifyRequestDto;
 import me.sup2is.member.domain.dto.MemberRequestDto;
 import me.sup2is.member.service.MemberService;
 import org.junit.jupiter.api.Test;
@@ -15,15 +18,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Arrays;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,6 +46,9 @@ class MemberControllerTest {
 
     @MockBean
     MemberService memberService;
+
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
 
     @Test
     public void create_member() throws Exception {
@@ -82,6 +91,10 @@ class MemberControllerTest {
                     , 123
                     , "12341234");
 
+
+        String email = "test@example.com";
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/")
@@ -91,4 +104,48 @@ class MemberControllerTest {
                 .andExpect(status().is(400));
     }
 
+    @Test
+    public void modify_member() throws Exception {
+        //given
+        MemberModifyRequestDto memberModifyRequestDto =
+                new MemberModifyRequestDto("new-password"
+                    , "test"
+                    , "test"
+                    , 123
+                    , "010-3132-1000");
+
+        String email = "test@example.com";
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/")
+                    .content(objectMapper.writeValueAsString(memberModifyRequestDto))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(org.apache.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().is(200))
+                .andDo(document("modify-member",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                        ),
+                        requestFields(
+                                fieldWithPath("password").type(JsonFieldType.STRING).description("변경될 회원 비밀번호 (최소 6자리)"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("변경될 회원 이름 or 닉네임"),
+                                fieldWithPath("address").type(JsonFieldType.STRING).description("변경될 회원주소"),
+                                fieldWithPath("zipCode").type(JsonFieldType.NUMBER).description("변경될 우편번호"),
+                                fieldWithPath("phone").type(JsonFieldType.STRING).description("변경될 휴대폰 번호")
+                        )
+                ));
+    }
+
+    private Member getMember(Member.Builder builder, String email, String address, String sup2is, String password, String phone, int zipCode) {
+        return Member.createMember(builder.address(address)
+                .email(email)
+                .name(sup2is)
+                .password(password)
+                .phone(phone)
+                .zipCode(zipCode)
+                .authorities(Arrays.asList("MEMBER")));
+    }
 }

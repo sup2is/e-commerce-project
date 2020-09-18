@@ -1,6 +1,6 @@
 package me.sup2is.order.exception;
 
-public class OrderNotFoundException extends Throwable {
+public class OrderNotFoundException extends RuntimeException {
 
     public OrderNotFoundException() {
         super();

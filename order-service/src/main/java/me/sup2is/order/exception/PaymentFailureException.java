@@ -1,6 +1,6 @@
 package me.sup2is.order.exception;
 
-public class PaymentFailureException extends Throwable {
+public class PaymentFailureException extends RuntimeException {
 
     public PaymentFailureException() {
         super();

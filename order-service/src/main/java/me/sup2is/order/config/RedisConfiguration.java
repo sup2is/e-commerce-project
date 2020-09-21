@@ -45,7 +45,7 @@ public class RedisConfiguration {
     }
 
     @Bean
-    public HashOperations<String, String, ProductStockDto> productStockDtoHashOperations() {
+    public HashOperations<String, String, Object> hashOperations() {
         return redisTemplate().opsForHash();
     }
 

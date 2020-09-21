@@ -66,8 +66,8 @@ class OrderControllerTest {
     @DisplayName("주문 테스트")
     public void order() throws Exception {
         //given
-        OrderItemRequestDto orderItemRequestDto1 = new OrderItemRequestDto(1L, 20000L, 4, 0);
-        OrderItemRequestDto orderItemRequestDto2 = new OrderItemRequestDto(1L, 30000L, 2, 0);
+        OrderItemRequestDto orderItemRequestDto1 = new OrderItemRequestDto(1L, 4, 0);
+        OrderItemRequestDto orderItemRequestDto2 = new OrderItemRequestDto(1L, 2, 0);
 
         List<OrderItemRequestDto> orderItemRequestDto = Arrays.asList(orderItemRequestDto1, orderItemRequestDto2);
 
@@ -97,20 +97,18 @@ class OrderControllerTest {
                                 fieldWithPath("address").type(JsonFieldType.STRING).description("상품 수령 주소"),
                                 fieldWithPath("orderItems").type(JsonFieldType.ARRAY).description("주문 아이템 리스트"),
                                 fieldWithPath("orderItems[].productId").type(JsonFieldType.NUMBER).description("상품 번호"),
-                                fieldWithPath("orderItems[].price").type(JsonFieldType.NUMBER).description("상품 가격"),
                                 fieldWithPath("orderItems[].count").type(JsonFieldType.NUMBER).description("주문 수량"),
                                 fieldWithPath("orderItems[].discountRate").type(JsonFieldType.NUMBER).description("할인율")
                         )
                 ));
-
     }
 
     @Test
     @DisplayName("/order 요청시 orderItemRequest 파라미터, 주문 수령 주소 검사")
     public void order_invalid_parameter() throws Exception {
         //given
-        OrderItemRequestDto orderItemRequestDto1 = new OrderItemRequestDto(1L, 20000L, 4, 0);
-        OrderItemRequestDto orderItemRequestDto2 = new OrderItemRequestDto(1L, null, 2, 0);
+        OrderItemRequestDto orderItemRequestDto1 = new OrderItemRequestDto(1L, 4, 0);
+        OrderItemRequestDto orderItemRequestDto2 = new OrderItemRequestDto(1L, 2, 0);
 
         List<OrderItemRequestDto> orderItemRequestDto = Arrays.asList(orderItemRequestDto1, orderItemRequestDto2);
 

@@ -1,7 +1,6 @@
 package me.sup2is.order.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.sup2is.order.domain.OrderItem;
 import me.sup2is.order.domain.dto.ProductStockDto;
 import me.sup2is.order.exception.OutOfStockException;
 import org.junit.jupiter.api.DisplayName;
@@ -21,26 +20,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CachedProductStockServiceTest {
 
     @MockBean
-    HashOperations<String, String, ProductStockDto> productStockDtoHashOperations;
+    HashOperations<String, String, Object> hashOperations;
 
     @Autowired
     CachedProductStockService cachedProductStockService;
 
     @Test
-    @DisplayName("상품 재고를 redis에서 체크")
+    @DisplayName("상품 재고를 redis에서 체크하고 재고가 없을때")
     public void check_item_stock() {
         //given
         ProductStockDto productStockDto = new ProductStockDto(1L, 5, 5000L);
 
-        Mockito.when(productStockDtoHashOperations.get("product:" + productStockDto.getProductId(),
-                "product")).thenReturn(productStockDto);
+        Mockito.when(hashOperations.get("product:" + productStockDto.getProductId(),
+                "stock")).thenReturn(-1);
 
         //when
         //then
-        ProductStockDto cachedProductStock = cachedProductStockService.getCachedProductStock(1L);
-        assertEquals(productStockDto.getProductId(), cachedProductStock.getProductId());
-        assertEquals(productStockDto.getStock(), cachedProductStock.getStock());
-        assertEquals(productStockDto.getPrice(), cachedProductStock.getPrice());
-
+        assertThrows(OutOfStockException.class, () -> cachedProductStockService.checkItemStock(productStockDto.getProductId(), 6));
     }
+
 }

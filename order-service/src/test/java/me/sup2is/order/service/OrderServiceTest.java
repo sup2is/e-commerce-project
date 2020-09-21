@@ -107,29 +107,6 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("재고부족으로 주문 실패")
-    public void reject_save() throws OutOfStockException {
-        //given
-        OrderItem orderItem1 = getOrderItem(1L, 10000L, 2);
-        OrderItem orderItem2 = getOrderItem(22L, 50000L, 1);
-
-        List<OrderItem> orderItems = Arrays.asList(orderItem1, orderItem2);
-
-        Order order = Order.Builder.builder()
-                .orderItems(orderItems)
-                .address("주문하는 주소")
-                .build()
-                .toEntity();
-
-        when(cachedProductStockService.getCachedProductStock(anyLong()))
-                .thenReturn(new ProductStockDto(1L,0,10000L), new ProductStockDto(22L,0,50000L));
-
-        //when
-        //then
-        assertThrows(OutOfStockException.class, () -> orderService.order(1L, order));
-    }
-
-    @Test
     @DisplayName("주문 취소")
     public void cancel() throws OutOfStockException, CancelFailureException, OrderNotFoundException, IllegalAccessException {
         //given

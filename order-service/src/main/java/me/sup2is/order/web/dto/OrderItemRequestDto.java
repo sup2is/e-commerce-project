@@ -14,9 +14,6 @@ public class OrderItemRequestDto {
     private Long productId;
 
     @NotNull
-    private Long price;
-
-    @NotNull
     private Integer count;
 
     private Integer discountRate;
@@ -24,7 +21,7 @@ public class OrderItemRequestDto {
     public OrderItem toEntity() {
         return OrderItem.Builder.builder()
                 .count(count)
-                .discountRate(discountRate)
+                .discountRate(0) //todo 미구현
                 .productId(productId)
                 .build()
                 .toEntity();

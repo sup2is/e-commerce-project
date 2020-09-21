@@ -30,20 +30,19 @@ public class OrderService {
 
     public void order(Long memberId, Order order) throws OutOfStockException {
         for (OrderItem orderItem : order.getOrderItems()) {
+            cachedProductStockService.checkItemStock(orderItem.getProductId(), orderItem.getCount());
             ProductStockDto cachedProductStock = cachedProductStockService.getCachedProductStock(orderItem.getProductId());
-            if(cachedProductStock.getStock() < orderItem.getCount()) {
-                throw new OutOfStockException("product ID : " + orderItem.getProductId() + " stock is lack");
-            }
-
             orderItem.setPrice(cachedProductStock.getPrice());
         }
 
         order.setMemberId(memberId);
         order.setTotalPrice();
 
-        paymentModuleClient.payment();
+//        paymentModuleClient.payment(); //결제모듈 미구현
         orderItemService.addItems(order.getOrderItems());
         orderRepository.save(order);
+
+        //todo message 기반으로 변경
         productServiceClient.modifyStock(ProductStockDto.createDtoByOrderItems(order.getOrderItems()));
     }
 

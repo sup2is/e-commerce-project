@@ -1,7 +1,6 @@
 package me.sup2is.order.domain;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.sup2is.order.domain.audit.AuditTime;

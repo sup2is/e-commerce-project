@@ -11,7 +11,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -46,9 +46,15 @@ public class RedisConfiguration {
     }
 
     @Bean
-    public HashOperations<String, String, ProductStockDto> productStockDtoHashOperations() {
+    public HashOperations<String, String, Object> hashOperations() {
         return redisTemplate().opsForHash();
     }
+
+    @Bean
+    public ValueOperations<String, Object> productValueOperations() {
+        return redisTemplate().opsForValue();
+    }
+
 
     @Bean
     public HashOperations<String, String, MemberDto> memberDtoHashOperations() {

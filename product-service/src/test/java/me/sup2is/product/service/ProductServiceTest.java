@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 
 @DataJpaTest
-@Import({ProductService.class, ProductCategoryService.class, ProductStockService.class})
+@Import({ProductService.class, ProductCategoryService.class, CachedProductStockService.class})
 @EnableJpaAuditing
 class ProductServiceTest {
 
@@ -33,7 +33,7 @@ class ProductServiceTest {
     CategoryService categoryService;
 
     @MockBean
-    HashOperations<String, String, ProductStockDto> productStockDtoHashOperations;
+    HashOperations<String, String, Object> productStockDtoHashOperations;
 
     @Test
     public void register_with_categories(){

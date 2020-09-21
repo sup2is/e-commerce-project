@@ -9,13 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ProductStockService {
+public class CachedProductStockService {
 
     private static final String PREFIX = "product:";
-    private final HashOperations<String, String, ProductStockDto> productStockDtoHashOperations;
+    private final HashOperations<String, String, Object> hashOperations;
 
     public void insertStock(ProductStockDto productStockDto) {
-        productStockDtoHashOperations.put(PREFIX + productStockDto.getProductId(), "product", productStockDto);
+        hashOperations.putAll(PREFIX + productStockDto.getProductId(), productStockDto.toMap());
     }
-
 }

@@ -38,7 +38,7 @@ class ProductSearchServiceTest {
     ProductService productService;
 
     @MockBean
-    ProductStockService productStockService;
+    CachedProductStockService cachedProductStockService;
 
     @Test
     @DisplayName("상품명으로 검색")

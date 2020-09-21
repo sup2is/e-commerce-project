@@ -16,6 +16,7 @@ import me.sup2is.product.web.dto.*;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +123,7 @@ class ProductControllerTest {
                 );
     }
 
+    @Disabled
     @Test
     public void modify_stock() throws Exception {
         //given

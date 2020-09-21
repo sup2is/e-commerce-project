@@ -44,7 +44,7 @@ public class ProductCategoryIntegrationTest {
     MemberServiceClient memberServiceClient;
 
     @MockBean
-    HashOperations<String, String, ProductStockDto> stringStringProductStockDtoHashOperations;
+    HashOperations<String, String, Object> stringStringProductStockDtoHashOperations;
 
     @MockBean
     HashOperations<String, String, MemberDto> stringStringMemberDtoHashOperations;

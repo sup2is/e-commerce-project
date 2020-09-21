@@ -21,7 +21,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final ProductCategoryService productCategoryService;
-    private final ProductStockService productStockService;
+    private final CachedProductStockService cachedProductStockService;
 
     public void register(Long sellerId, Product product, List<String> categoryNames) {
         product.setSellerId(sellerId);
@@ -32,7 +32,7 @@ public class ProductService {
                 .collect(Collectors.toList());
         product.classifyCategories(productCategories);
         productCategoryService.save(productCategories);
-        productStockService.insertStock(new ProductStockDto(product.getId(), product.getStock(), product.getPrice()));
+        cachedProductStockService.insertStock(new ProductStockDto(product.getId(), product.getStock(), product.getPrice()));
     }
 
     public Product findOne(Long id) {
@@ -40,10 +40,10 @@ public class ProductService {
     }
 
     public void modifyStock(List<ProductStockDto> productStockDto) {
+        //todo message 기반으로 변경
         for (ProductStockDto stockDto : productStockDto) {
             Product p = findOne(stockDto.getProductId());
             p.modifyStock(stockDto.getStock());
-            productStockService.insertStock(new ProductStockDto(p.getId(), p.getStock(), p.getPrice()));
         }
     }
 

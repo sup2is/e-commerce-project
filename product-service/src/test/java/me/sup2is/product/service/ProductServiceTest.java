@@ -4,7 +4,7 @@ import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.web.dto.ProductModifyRequestDto;
 import me.sup2is.product.web.dto.ProductRequestDto;
-import me.sup2is.product.domain.dto.ProductStockDto;
+import me.sup2is.product.web.dto.ProductStockModifyRequestDto;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.redis.core.HashOperations;
 
+import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +35,12 @@ class ProductServiceTest {
 
     @MockBean
     HashOperations<String, String, Object> productStockDtoHashOperations;
+
+    @Autowired
+    EntityManager entityManager;
+
+    @Autowired
+    ProductCategoryService productCategoryService;
 
     @Test
     public void register_with_categories(){
@@ -72,10 +79,6 @@ class ProductServiceTest {
     public void modify_stock() {
         //given
         List<String> categoryNames = Arrays.asList("의류", "청바지");
-        Category category1 = Category.createCategory("의류");
-        Category category2 = Category.createCategory("청바지");
-        List<Category> categories = Arrays.asList(category1,
-                category2);
 
         ProductRequestDto productRequestDto = new ProductRequestDto(
                 "청바지",
@@ -88,15 +91,18 @@ class ProductServiceTest {
                 categoryNames);
 
         Product product = productRequestDto.toEntity();
-        Mockito.when(categoryService.findAllByNames(categoryNames)).thenReturn(categories);
         productService.register(1L, product, productRequestDto.getCategories());
 
-        ProductStockDto productStockDto = new ProductStockDto(product.getId(), -2, 50000L);
+        ProductStockModifyRequestDto productStockDto = new ProductStockModifyRequestDto(product.getId(), -2);
         productService.modifyStock(Arrays.asList(productStockDto));
 
         //when
         //then
+
+        entityManager.clear();
+
         Product one = productService.findOne(product.getId());
+
         assertEquals(3, one.getStock());
 
     }

@@ -7,6 +7,7 @@ import me.sup2is.product.domain.dto.ProductModifyDto;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.exception.ProductNotFoundException;
 import me.sup2is.product.repository.ProductRepository;
+import me.sup2is.product.web.dto.ProductStockModifyRequestDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,11 +40,10 @@ public class ProductService {
         return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("product is not found"));
     }
 
-    public void modifyStock(List<ProductStockDto> productStockDto) {
+    public void modifyStock(List<ProductStockModifyRequestDto> productStockDto) {
         //todo message 기반으로 변경
-        for (ProductStockDto stockDto : productStockDto) {
-            Product p = findOne(stockDto.getProductId());
-            p.modifyStock(stockDto.getStock());
+        for (ProductStockModifyRequestDto stockDto : productStockDto) {
+            productRepository.reduceStock(stockDto.getProductId(), stockDto.getStock());
         }
     }
 

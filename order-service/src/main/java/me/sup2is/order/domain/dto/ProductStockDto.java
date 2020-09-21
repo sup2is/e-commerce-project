@@ -19,9 +19,4 @@ public class ProductStockDto implements Serializable {
     private int stock;
     private long price;
 
-    public static List<ProductStockDto> createDtoByOrderItems(List<OrderItem> orderItems) {
-        return orderItems.stream()
-                .map(orderItem -> new ProductStockDto(orderItem.getProductId(), orderItem.getCount() * -1, orderItem.getPrice()))
-                .collect(Collectors.toList());
-    }
 }

@@ -47,7 +47,7 @@ public class ProductController {
     }
 
     @PutMapping("/stock")
-    public ResponseEntity<JsonResult<?>> modifyStock(@RequestBody List<ProductStockDto> productStockDto) {
+    public ResponseEntity<JsonResult<?>> modifyStock(@RequestBody List<ProductStockModifyRequestDto> productStockDto) {
         //todo message 기반으로 변경
         productService.modifyStock(productStockDto);
         return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));

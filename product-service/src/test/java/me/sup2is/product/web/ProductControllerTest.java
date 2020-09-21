@@ -2,7 +2,6 @@ package me.sup2is.product.web;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.product.config.RestDocsConfiguration;
@@ -13,10 +12,8 @@ import me.sup2is.product.domain.dto.MemberDto;
 import me.sup2is.product.service.ProductSearchKey;
 import me.sup2is.product.service.ProductSearchService;
 import me.sup2is.product.web.dto.*;
-import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +27,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.util.Arrays;
 import java.util.List;
@@ -123,13 +118,12 @@ class ProductControllerTest {
                 );
     }
 
-    @Disabled
     @Test
     public void modify_stock() throws Exception {
         //given
 
-        ProductStockDto productStockDto1 = new ProductStockDto(1, 5, 50000L);
-        ProductStockDto productStockDto2 = new ProductStockDto(2, -2, 50000L);
+        ProductStockModifyRequestDto productStockDto1 = new ProductStockModifyRequestDto(1, 5);
+        ProductStockModifyRequestDto productStockDto2 = new ProductStockModifyRequestDto(2, -2);
 
         String email = "test@example.com";
         MemberDto memberDto = getMemberDto(email);

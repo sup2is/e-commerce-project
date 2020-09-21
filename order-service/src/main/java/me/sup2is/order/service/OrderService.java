@@ -11,6 +11,7 @@ import me.sup2is.order.exception.CancelFailureException;
 import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
 import me.sup2is.order.repository.OrderRepository;
+import me.sup2is.order.web.dto.ProductStockModifyRequestDto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,7 @@ public class OrderService {
         orderRepository.save(order);
 
         //todo message 기반으로 변경
-        productServiceClient.modifyStock(ProductStockDto.createDtoByOrderItems(order.getOrderItems()));
+        productServiceClient.modifyStock(ProductStockModifyRequestDto.createDtoByOrderItems(order.getOrderItems()));
     }
 
     public Order findOne(Long id) throws OrderNotFoundException {

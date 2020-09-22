@@ -23,7 +23,4 @@ public class CachedMemberService {
                 , MemberDto.class));
     }
 
-    public void caching(MemberDto member) {
-        memberDtoHashOperations.put(KEY_PREFIX + member.getEmail(), HASH_KEY, member);
-    }
 }

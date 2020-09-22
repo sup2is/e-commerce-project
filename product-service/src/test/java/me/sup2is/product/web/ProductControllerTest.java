@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
+import me.sup2is.product.config.MockTestConfiguration;
 import me.sup2is.product.config.RestDocsConfiguration;
 import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
@@ -14,6 +15,7 @@ import me.sup2is.product.service.ProductSearchService;
 import me.sup2is.product.web.dto.*;
 import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ProductController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @AutoConfigureRestDocs
-@Import({JwtTokenUtil.class, RestDocsConfiguration.class})
+@Import({JwtTokenUtil.class, RestDocsConfiguration.class, MockTestConfiguration.class})
 class ProductControllerTest {
 
     @Autowired
@@ -314,7 +319,8 @@ class ProductControllerTest {
         String urlTemplate = "/search?" + s;
         System.out.println(urlTemplate);
         mockMvc.perform(RestDocumentationRequestBuilders.get(urlTemplate)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("get-products",

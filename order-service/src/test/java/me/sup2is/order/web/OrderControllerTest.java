@@ -3,6 +3,7 @@ package me.sup2is.order.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
+import me.sup2is.order.config.MockTestConfiguration;
 import me.sup2is.order.config.RestDocsConfiguration;
 import me.sup2is.order.domain.Order;
 import me.sup2is.order.domain.OrderItem;
@@ -44,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @AutoConfigureRestDocs
-@Import({RestDocsConfiguration.class, JwtTokenUtil.class})
+@Import({RestDocsConfiguration.class, JwtTokenUtil.class, MockTestConfiguration.class})
 class OrderControllerTest {
 
     @Autowired

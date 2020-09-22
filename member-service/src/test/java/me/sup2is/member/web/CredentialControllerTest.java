@@ -3,6 +3,7 @@ package me.sup2is.member.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.member.client.dto.MemberDto;
+import me.sup2is.member.config.MockTestConfiguration;
 import me.sup2is.member.domain.Member;
 import me.sup2is.member.service.MemberService;
 import me.sup2is.web.JsonResult;
@@ -26,7 +27,7 @@ import java.util.Arrays;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(excludeAutoConfiguration = SecurityAutoConfiguration.class)
-@Import(JwtTokenUtil.class)
+@Import({JwtTokenUtil.class, MockTestConfiguration.class})
 class CredentialControllerTest {
 
     @Autowired

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.discovery.converters.Auto;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
+import me.sup2is.member.config.MockTestConfiguration;
 import me.sup2is.member.config.RestDocsConfiguration;
 import me.sup2is.member.domain.Member;
 import me.sup2is.member.domain.dto.MemberModifyRequestDto;
@@ -35,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @AutoConfigureRestDocs
-@Import({RestDocsConfiguration.class, JwtTokenUtil.class})
+@Import({RestDocsConfiguration.class, JwtTokenUtil.class, MockTestConfiguration.class})
 class MemberControllerTest {
 
     @Autowired

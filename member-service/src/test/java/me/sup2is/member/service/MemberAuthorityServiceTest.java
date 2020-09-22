@@ -8,6 +8,7 @@ import me.sup2is.member.repository.AuthorityRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,9 @@ class MemberAuthorityServiceTest {
 
     @Autowired
     AuthorityRepository authorityRepository;
+
+    @MockBean
+    CachedMemberService cachedMemberService;
 
     @Test
     public void find_one() throws DuplicateMemberException {

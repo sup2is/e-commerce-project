@@ -16,7 +16,7 @@ public class CredentialController {
 
     @PostMapping("/credential")
     public MemberDto getMember(@RequestBody @NonNull String email) {
-        return MemberDto.createMemberDto(memberService.findByEmail(email));
+        return memberService.findMemberDto(email);
     }
 
 }

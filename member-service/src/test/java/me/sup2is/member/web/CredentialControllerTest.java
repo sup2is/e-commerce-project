@@ -57,7 +57,7 @@ class CredentialControllerTest {
         FieldUtils.writeField(member, "id", 1L, true);
 
         MemberDto memberDto = MemberDto.createMemberDto(member);
-        Mockito.when(memberService.findByEmail(email)).thenReturn(member);
+        Mockito.when(memberService.findMemberDto(email)).thenReturn(memberDto);
 
         //when
         //then

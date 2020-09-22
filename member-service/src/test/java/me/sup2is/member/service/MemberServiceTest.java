@@ -7,6 +7,7 @@ import me.sup2is.member.exception.MemberNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,9 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @DataJpaTest
 @Import({MemberService.class, AuthorityService.class})
@@ -22,6 +26,9 @@ class MemberServiceTest {
 
     @Autowired
     MemberService memberService;
+
+    @MockBean
+    CachedMemberService cachedMemberService;
 
     @Test
     public void find_one() throws DuplicateMemberException {
@@ -77,9 +84,10 @@ class MemberServiceTest {
         Member findMember = memberService.findOne(member.getId());
         assertEquals(modifyMember.getAddress(), findMember.getAddress());
         assertEquals(modifyMember.getName(), findMember.getName());
-        assertEquals(modifyMember.getPassword(), findMember.getPassword());
+//        assertEquals(modifyMember.getPassword(), findMember.getPassword());
         assertEquals(modifyMember.getPhone(), findMember.getPhone());
         assertEquals(modifyMember.getZipCode(), findMember.getZipCode());
+        verify(cachedMemberService, times(1)).evictMember(any());
 
     }
 

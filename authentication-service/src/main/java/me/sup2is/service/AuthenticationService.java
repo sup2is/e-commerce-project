@@ -7,15 +7,18 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final MemberServiceClient memberServiceClient;
+    private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
 
     public MemberDto authenticateByEmailAndPassword(String email, String password) {
-        MemberDto memberDto = memberServiceClient.getMember(email);
+        MemberDto memberDto = memberService.getMember(email);
+
         if(!passwordEncoder.matches(password, memberDto.getPassword())) {
             throw new BadCredentialsException("Password not matched");
         }

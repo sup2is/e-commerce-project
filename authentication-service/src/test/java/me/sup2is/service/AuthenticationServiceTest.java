@@ -25,7 +25,7 @@ class AuthenticationServiceTest {
     PasswordEncoder passwordEncoder;
 
     @MockBean
-    MemberServiceClient memberServiceClient;
+    MemberService memberService;
 
     @Test
     public void authenticate_by_email_and_password() {
@@ -46,7 +46,7 @@ class AuthenticationServiceTest {
                 .zipCode(12345)
                 .build();
 
-        Mockito.when(memberServiceClient.getMember(email))
+        Mockito.when(memberService.getMember(email))
                 .thenReturn(expect);
         Mockito.when(passwordEncoder.matches(password, expect.getPassword()))
                 .thenReturn(true);

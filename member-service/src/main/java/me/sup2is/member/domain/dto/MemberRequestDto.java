@@ -36,6 +36,7 @@ public class MemberRequestDto {
 
     public Member toEntity() {
         return Member.Builder.builder()
+                .email(email)
                 .zipCode(zipCode)
                 .phone(phone)
                 .password(password)

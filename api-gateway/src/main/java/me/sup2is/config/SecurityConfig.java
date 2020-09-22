@@ -28,8 +28,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/member").permitAll()
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/api/product",
+                        "/api/product/stock",
+                        "/api/product/category",
+                        "/api/product/\\d+").hasRole("SELLER")
                 .antMatchers("/api/**").hasRole("MEMBER")
+                .antMatchers("/auth/**").permitAll()
             .and()
                 .csrf().disable()
                 .formLogin().disable()

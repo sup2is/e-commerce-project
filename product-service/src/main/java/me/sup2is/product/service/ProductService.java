@@ -61,5 +61,7 @@ public class ProductService {
                 .collect(Collectors.toList());
         product.classifyCategories(productCategories);
 
+        cachedProductStockService.evict(product.getId());
+        cachedProductStockService.insertStock(new ProductStockDto(product.getId(), product.getStock(), product.getPrice()));
     }
 }

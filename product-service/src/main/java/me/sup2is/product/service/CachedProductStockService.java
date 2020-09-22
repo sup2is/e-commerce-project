@@ -17,4 +17,8 @@ public class CachedProductStockService {
     public void insertStock(ProductStockDto productStockDto) {
         hashOperations.putAll(PREFIX + productStockDto.getProductId(), productStockDto.toMap());
     }
+
+    public void evict(Long id) {
+        hashOperations.delete(PREFIX + id, "stock", "entity");
+    }
 }

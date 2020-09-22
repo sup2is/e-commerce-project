@@ -49,7 +49,7 @@ public class DataInitializer {
                     .name(brandName + ": " + i)
                     .salable(true)
                     .price(Long.valueOf((int) (Math.random() * 10) + 1) * 100000)
-                    .stock(10000)
+                    .stock(1000000)
                     .build()
                     .toEntity();
 

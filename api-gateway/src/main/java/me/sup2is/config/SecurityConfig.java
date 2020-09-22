@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/product/stock",
                         "/api/product/category",
                         "/api/product/\\d+").hasRole("SELLER")
-                .antMatchers("/api/**").hasRole("MEMBER")
+                .antMatchers("/api/**").hasAnyRole("MEMBER", "SELLER")
                 .antMatchers("/auth/**").permitAll()
             .and()
                 .csrf().disable()
@@ -42,16 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(exceptionHandlerFilter, SecurityContextPersistenceFilter.class);
         http.addFilterBefore(jwtAuthenticateFilter, UsernamePasswordAuthenticationFilter.class);
     }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
-        auth.inMemoryAuthentication()
-                .withUser("choi")
-                .password(passwordEncoder().encode("qwer!23"))
-                .roles("MEMBER");
-    }
-
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

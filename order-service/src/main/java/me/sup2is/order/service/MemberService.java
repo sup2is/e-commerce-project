@@ -18,7 +18,6 @@ public class MemberService {
         Optional<MemberDto> cachedMember = cachedMemberService.findMember(email);
         return cachedMember.orElseGet(() -> {
             MemberDto memberDto = memberServiceClient.getMember(email);
-            cachedMemberService.caching(memberDto);
             return memberDto;
         });
     }

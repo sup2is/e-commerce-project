@@ -24,7 +24,7 @@ class CachedMemberServiceTest {
     CachedMemberService cachedMemberService;
 
     @MockBean
-    HashOperations<String, String, MemberDto> memberDtoHashOperations;
+    HashOperations<String, String, Object> hashOperations;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -47,7 +47,7 @@ class CachedMemberServiceTest {
                 .memberId(1L)
                 .build();
 
-        Mockito.when(memberDtoHashOperations.get("member:" + email, "member"))
+        Mockito.when(hashOperations.get("member:" + email, "member"))
                 .thenReturn(memberDto);
 
 
@@ -66,7 +66,7 @@ class CachedMemberServiceTest {
 
         String email = "test@example";
 
-        Mockito.when(memberDtoHashOperations.get("member:" + email, "member"))
+        Mockito.when(hashOperations.get("member:" + email, "member"))
                 .thenReturn(null);
 
         //when

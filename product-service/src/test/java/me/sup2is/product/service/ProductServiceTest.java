@@ -34,7 +34,7 @@ class ProductServiceTest {
     CategoryService categoryService;
 
     @MockBean
-    HashOperations<String, String, Object> productStockDtoHashOperations;
+    HashOperations<String, String, Object> hashOperations;
 
     @Autowired
     EntityManager entityManager;

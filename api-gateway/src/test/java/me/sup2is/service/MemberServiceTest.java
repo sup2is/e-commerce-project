@@ -86,7 +86,6 @@ class MemberServiceTest {
 
         //then
         assertNotNull(member);
-        verify(cachedMemberService,times(1)).caching(member);
 
     }
 

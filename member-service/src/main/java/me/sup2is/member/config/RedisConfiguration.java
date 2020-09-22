@@ -54,9 +54,5 @@ public class RedisConfiguration {
         return redisTemplate().opsForValue();
     }
 
-    @Bean
-    public HashOperations<String, String, MemberDto> memberDtoHashOperations() {
-        return redisTemplate().opsForHash();
-    }
 
 }

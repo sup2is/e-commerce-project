@@ -43,7 +43,7 @@ public class RedisConfiguration {
     }
 
     @Bean
-    public HashOperations<String, String, MemberDto> memberDtoHashOperations() {
+    public HashOperations<String, String, Object> hashOperations() {
         return redisTemplate().opsForHash();
     }
 

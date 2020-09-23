@@ -10,7 +10,11 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>me.sup2is</groupId>
     <artifactId>api-gateway</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
 
     <name>api-gateway</name>
 
@@ -58,5 +62,14 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -3,7 +3,16 @@ spring:
     host: localhost
     port: 6379
   datasource:
-    url: jdbc:h2:~/e-commerce-dev
+    url: jdbc:h2:~/e-commerce-dev;AUTO_SERVER=TRUE
+  jpa:
+    show-sql: on
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+  zipkin:
+    base-url: http://zipkin-server/9411 
 
 eureka:
   instance:
@@ -18,3 +27,11 @@ jwt:
   secret: my-secret
 server:
   port: 8083
+
+logging:
+  level:
+    org.springframework: DEBUG
+
+max:
+  page:
+    size: 10

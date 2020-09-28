@@ -1,0 +1,34 @@
+spring:
+  redis:
+    host: "redis-server"
+    port: 6379
+  datasource:
+    url: "jdbc:mysql:db/e-commerce"
+  jpa:
+    show-sql: on
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+  sleuth:
+    sampler:
+      probability: 1
+  zipkin:
+    base-url: "http://zipkin-server:9411"
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: "http://eureka-server:8761/eureka/"
+
+jwt:
+  secret: my-secret
+
+logging:
+  level:
+    org.springframework: DEBUG

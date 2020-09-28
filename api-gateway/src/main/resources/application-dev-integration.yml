@@ -1,12 +1,12 @@
 spring:
   redis:
-    host: "redis-server"
+    host: redis-server
     port: 6379
   sleuth:
     sampler:
       probability: 1
   zipkin:
-    base-url: "http://zipkin-server:9411"
+    base-url: http://zipkin-server:9411
 
 server:
   port: 80
@@ -21,7 +21,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: "http://eureka-server:8761/eureka/"
+      defaultZone: http://zipkin-server:9411
 
 
 zuul:

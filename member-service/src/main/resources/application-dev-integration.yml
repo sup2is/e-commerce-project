@@ -2,17 +2,24 @@ spring:
   redis:
     host: redis-server
     port: 6379
+
   datasource:
-    url: jdbc:mysql://db:3306/e-commerce
-    data-username: root
+    url: jdbc:mysql://db:3306/e-commerce?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
     password: qwer!23
+
   jpa:
+    database: mysql
     show-sql: on
     properties:
       hibernate:
         format_sql: true
     hibernate:
       ddl-auto: create
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+
   sleuth:
     sampler:
       probability: 1

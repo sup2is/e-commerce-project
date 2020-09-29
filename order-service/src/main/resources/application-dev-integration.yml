@@ -27,7 +27,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://zipkin-server:9411
+      defaultZone: http://eureka-server:8761/eureka/
 
 jwt:
   secret: my-secret

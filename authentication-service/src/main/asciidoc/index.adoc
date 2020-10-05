@@ -1,0 +1,11 @@
+= Auth Service
+:sectnums:
+:toc: left
+:toclevels: 4
+:toc-title: My Content
+
+== 인증 요청
+
+include::{snippets}/get-auth/http-request.adoc[]
+include::{snippets}/get-auth/http-response.adoc[]
+include::{snippets}/get-auth/response-fields.adoc[]

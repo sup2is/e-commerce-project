@@ -2,6 +2,8 @@ package me.sup2is.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.sup2is.client.dto.MemberDto;
+import me.sup2is.config.MockTestConfiguration;
+import me.sup2is.config.RestDocsConfiguration;
 import me.sup2is.dto.AuthenticationResponseDto;
 import me.sup2is.jwt.JwtTokenType;
 import me.sup2is.jwt.JwtTokenUtil;
@@ -10,8 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +25,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,6 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = AuthenticationController.class,
         excludeAutoConfiguration = {SecurityAutoConfiguration.class})
+@Import({RestDocsConfiguration.class, MockTestConfiguration.class})
+@AutoConfigureRestDocs
 class AuthenticationControllerTest {
 
     @Autowired
@@ -86,7 +97,23 @@ class AuthenticationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(jsonResult)));
+                .andExpect(content().string(objectMapper.writeValueAsString(jsonResult)))
+                .andDo(document("get-auth",
+                        requestFields(
+                                fieldWithPath("username").description("사용자 이메일"),
+                                fieldWithPath("password").description("사용자 패스워드")
+                        ),
+                        responseFields(
+                                fieldWithPath("result").description("API 요청 결과 SUCCESS / FAIL"),
+                                fieldWithPath("messages").description("API 요청 메시지"),
+                                fieldWithPath("error").description("API 요청 에러"),
+                                fieldWithPath("fieldErrors").description("API form validation 에러"),
+                                fieldWithPath("data").description("API 요청 데이터"),
+                                fieldWithPath("data.accessToken").description("access token"),
+                                fieldWithPath("data.refreshToken").description("refresh token")
+                        )
+                    )
+                );
     }
 
 

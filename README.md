@@ -54,7 +54,7 @@ Spring Cloud로 작성하는 E-Commerce 플랫폼
 
 # 구성
 
-![architecture](.\architecture.png)
+![architecture](https://github.com/sup2is/e-commerce-project/blob/master/architecture.png)
 
 
 

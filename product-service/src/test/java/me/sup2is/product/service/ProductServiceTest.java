@@ -46,26 +46,19 @@ class ProductServiceTest {
     public void register_with_categories(){
         //given
         List<String> categoryNames = Arrays.asList("의류", "청바지");
+        Product product = getProduct();
+
         Category category1 = Category.createCategory("의류");
         Category category2 = Category.createCategory("청바지");
         List<Category> categories = Arrays.asList(category1,
                 category2);
 
-        ProductRequestDto productRequestDto = new ProductRequestDto(
-                "청바지",
-                "AA123",
-                "리바이스",
-                "빈티지",
-                5,
-                10000L,
-                true,
-                categoryNames);
+        Mockito.when(categoryService.findAllByNames(anyList()))
+                .thenReturn(categories);
 
-        Product product = productRequestDto.toEntity();
-        Mockito.when(categoryService.findAllByNames(categoryNames)).thenReturn(categories);
 
         //when
-        productService.register(1L, product, productRequestDto.getCategories());
+        productService.register(1L, product, categoryNames);
         Product findProduct = productService.findOne(product.getId());
 
         //then
@@ -80,29 +73,16 @@ class ProductServiceTest {
         //given
         List<String> categoryNames = Arrays.asList("의류", "청바지");
 
-        ProductRequestDto productRequestDto = new ProductRequestDto(
-                "청바지",
-                "AA123",
-                "리바이스",
-                "빈티지",
-                5,
-                10000L,
-                true,
-                categoryNames);
+        Product product = getProduct();
+        productService.register(1L, product, categoryNames);
 
-        Product product = productRequestDto.toEntity();
-        productService.register(1L, product, productRequestDto.getCategories());
-
+        //when
         ProductStockModifyRequestDto productStockDto = new ProductStockModifyRequestDto(product.getId(), -2);
         productService.modifyStock(Arrays.asList(productStockDto));
 
-        //when
         //then
-
         entityManager.clear();
-
         Product one = productService.findOne(product.getId());
-
         assertEquals(3, one.getStock());
 
     }
@@ -111,18 +91,7 @@ class ProductServiceTest {
     public void modify() throws IllegalAccessException {
         //given
         List<String> categoryNames = Arrays.asList("의류", "청바지");
-
-        ProductRequestDto productRequestDto = new ProductRequestDto(
-                "청바지",
-                "AA123",
-                "리바이스",
-                "빈티지",
-                5,
-                10000L,
-                true,
-                categoryNames);
-
-        Product product = productRequestDto.toEntity();
+        Product product = getProduct();
 
         Category category1 = Category.createCategory("의류");
         Category category2 = Category.createCategory("청바지");
@@ -132,7 +101,7 @@ class ProductServiceTest {
         Mockito.when(categoryService.findAllByNames(anyList()))
                 .thenReturn(categories);
 
-        productService.register(1L, product, productRequestDto.getCategories());
+        productService.register(1L, product, categoryNames);
 
         ProductModifyRequestDto productModifyRequestDto = ProductModifyRequestDto.builder()
                 .brandName("캘빈클라인")
@@ -166,6 +135,19 @@ class ProductServiceTest {
         assertEquals(productModifyRequestDto.getCategories().size(), findProduct.getCategories().size());
         assertEquals(productModifyRequestDto.getSalable(), findProduct.isSalable());
 
+    }
+
+    private Product getProduct() {
+        return  Product.Builder.builder()
+                .name("청바지")
+                .code("AA123")
+                .brandName("리바이스")
+                .description("빈티지")
+                .stock(5)
+                .price(10000L)
+                .salable(true)
+                .build()
+                .toEntity();
     }
 
 

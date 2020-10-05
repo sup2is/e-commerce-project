@@ -33,12 +33,9 @@ class CategoryServiceTest {
         //given
         Category category1 = Category.createCategory("의류");
         Category category2 = Category.createCategory("청바지");
-        Category notExist = Category.createCategory("pant");
 
         categoryService.add(category1);
         categoryService.add(category2);
-
-        entityManager.flush();
 
         //when
         categoryService.findAllByNames(Arrays.asList("의류", "청바지", "pant"));

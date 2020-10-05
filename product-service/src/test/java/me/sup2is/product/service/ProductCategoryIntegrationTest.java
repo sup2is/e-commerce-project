@@ -47,29 +47,21 @@ public class ProductCategoryIntegrationTest {
     public void register() {
         //given
         List<String> categoryNames = Arrays.asList("의류", "청바지");
-        Category category1 = Category.createCategory("의류");
-        Category category2 = Category.createCategory("청바지");
-        List<Category> categories = Arrays.asList(category1,
-                category2);
 
-        ProductRequestDto productRequestDto = new ProductRequestDto(
-                "청바지",
-                "AA123",
-                "리바이스",
-                "빈티지",
-                5,
-                10000L,
-                true,
-                categoryNames);
+        Product product = Product.Builder.builder()
+                .name("청바지")
+                .code("AA123")
+                .brandName("리바이스")
+                .description("빈티지")
+                .stock(5)
+                .price(10000L)
+                .salable(true)
+                .build()
+                .toEntity();
 
-        Product product = productRequestDto.toEntity();
         //when
 
-        for (Category category : categories) {
-            categoryService.add(category);
-        }
-
-        productService.register(1L, product, productRequestDto.getCategories());
+        productService.register(1L, product, categoryNames);
 
         //then
         Product one = productService.findOne(product.getId());

@@ -1,6 +1,7 @@
 package me.sup2is.product.repository;
 
 import me.sup2is.product.domain.Category;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -22,6 +23,7 @@ class CategoryRepositoryTest {
     CategoryRepository categoryRepository;
 
     @Test
+    @DisplayName("카테고리 이름으로 N개 찾기")
     public void find_all_by_names() {
 
         //given

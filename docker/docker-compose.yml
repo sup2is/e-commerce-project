@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   redis-server:
     image: redis
@@ -53,6 +53,8 @@ services:
       - "eureka-server"
       - "zipkin-server"
       - "db"
+    deploy:
+      replicas: 3
 
   auth-service:
     image: sup2is/e-commerce-auth-service:0.1

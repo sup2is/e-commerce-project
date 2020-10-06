@@ -41,6 +41,8 @@ services:
     volumes:
       - "./lb-config/nginx.conf:/etc/nginx/nginx.conf"
     privileged: true
+    depends_on:
+      - "api-gateway"
 
   api-gateway:
     image: sup2is/e-commerce-api-gateway:0.1

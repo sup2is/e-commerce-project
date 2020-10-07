@@ -65,14 +65,6 @@ services:
       - "eureka-server"
       - "zipkin-server"
       - "db"
-    deploy:
-      replicas: 3
-    networks:
-      default:
-        aliases:
-          - "api-gateway-1"
-          - "api-gateway-2"
-          - "api-gateway-3"
 
   auth-service:
     image: sup2is/e-commerce-auth-service:0.1

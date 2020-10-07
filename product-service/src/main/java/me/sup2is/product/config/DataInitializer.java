@@ -3,14 +3,17 @@ package me.sup2is.product.config;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.service.ProductService;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
+import me.sup2is.web.JsonResult;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-@Profile("dev")
-@Component
+@RestController
 @RequiredArgsConstructor
 public class DataInitializer {
 
@@ -38,8 +41,9 @@ public class DataInitializer {
         add("운동화");
     }});
 
-    @PostConstruct
-    public void init() {
+    @GetMapping("/data-init")
+    public ResponseEntity<JsonResult<?>> init() {
+
         for (int i = 0; i < 100; i++) {
             String brandName = brandNames.get(getRandomByCollectionSize(brandNames));
             Product product = Product.Builder.builder()
@@ -55,6 +59,7 @@ public class DataInitializer {
 
             productService.register(1L, product, getRandomCategory());
         }
+        return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
     }
 
     private List<String> getRandomCategory() {

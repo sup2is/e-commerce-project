@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
-@Profile("dev")
+@Profile({"dev", "dev-integration"})
 @Component
 @RequiredArgsConstructor
 public class DataInitializer {

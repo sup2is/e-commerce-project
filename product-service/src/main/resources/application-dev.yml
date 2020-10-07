@@ -11,8 +11,6 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: create
-  zipkin:
-    base-url: http://zipkin-server/9411 
 
 eureka:
   instance:

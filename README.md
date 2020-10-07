@@ -2,6 +2,45 @@
 
 Spring Cloud로 작성하는 E-Commerce 플랫폼
 
+# QuickStart
+
+### Require
+
+- docker & docker-compose
+- memory 8G +
+
+```shell
+docker-compose -f ./e-commerce-project/docker/docker-compose.yml up -d
+```
+
+> 위 경우에는 따로 api 문서가 생성되어 있지 않습니다. api 문서 관련된 정보는
+>
+> [http://34.64.219.148:8080](http://34.64.219.148:8080) 에서 확인 가능합니다.
+
+# Build & Start
+
+### Require
+
+- java 8 +
+- maven 
+- docker & docker-compose
+- memory 8G +
+
+```shell
+cd {e-commerce-home-dir}
+mvn clean package
+docker-compose -f ./docker/docker-compose.yml up -d
+```
+
+> - 최초 build시에 많은 시간이 소요될 수 있습니다...
+> - build 후에 docker-compose up -d로 컨테이너를 올릴 경우 build 에서 생성된 restdocs 문서를 {host-ip}:8000 경로를 통해 확인하실 수 있습니다.
+
+# Guide
+
+- http://{host-ip}:8761/ 로 접속하시면 eureka service discovery 대시보드를 확인하실 수 있습니다. (컨테이너들이 초기화되는 시간이 어느정도 소요되기 때문에 최소 3분정도 뒤에 확인해주세요. )
+- http://{host-ip}:9411/ 로 접속하시면 zipkin 분산추척 trace 대시보드를 확인하실 수 있습니다.
+- nginx를 load-balancer로 사용했기때문에 api-gateway의 scale out이 필요할 경우 별도의 nginx 설정이 필요합니다.
+
 # 사용 기술
 
 - Java 8

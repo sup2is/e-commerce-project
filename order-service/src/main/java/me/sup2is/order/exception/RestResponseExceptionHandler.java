@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 @ControllerAdvice
 public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(OutOfStockException.class)
-    protected ResponseEntity<JsonResult<?>> outOfStockExceptionHandle(Exception e, HttpServletResponse httpServletResponse) {
+    @ExceptionHandler({OutOfStockException.class, ProductNotFoundException.class})
+    protected ResponseEntity<JsonResult<?>> badRequestExceptionHandle(Exception e, HttpServletResponse httpServletResponse) {
         httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(new JsonResult<>(e), HttpStatus.BAD_REQUEST);
     }

@@ -31,6 +31,9 @@ class CachedProductStockServiceTest {
         //given
         ProductStockDto productStockDto = new ProductStockDto(1L, 5, 5000L);
 
+        Mockito.when(hashOperations.hasKey("product:" + productStockDto.getProductId(), "stock"))
+                .thenReturn(true);
+
         Mockito.when(hashOperations.get("product:" + productStockDto.getProductId(),
                 "stock")).thenReturn(-1);
 

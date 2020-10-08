@@ -11,6 +11,7 @@ import me.sup2is.order.domain.dto.ProductStockDto;
 import me.sup2is.order.exception.CancelFailureException;
 import me.sup2is.order.exception.OrderNotFoundException;
 import me.sup2is.order.exception.OutOfStockException;
+import me.sup2is.order.exception.ProductNotFoundException;
 import me.sup2is.order.repository.OrderItemRepository;
 import me.sup2is.order.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -103,6 +104,31 @@ class OrderServiceTest {
 
         assertNotNull(order.getCreateAt());
         assertNotNull(order.getUpdatedAt());
+
+    }
+
+    @Test
+    @DisplayName("비정상적인 product ID 요청")
+    public void save_invalid_product_id() throws OutOfStockException {
+        //given
+        OrderItem orderItem1 = getOrderItem(66666L, 10000L, 2);
+
+        List<OrderItem> orderItems = Arrays.asList(orderItem1);
+
+        Order order = Order.Builder.builder()
+                .orderItems(orderItems)
+                .address("주문하는 주소")
+                .build()
+                .toEntity();
+
+
+        doThrow(ProductNotFoundException.class)
+                .when(cachedProductStockService)
+                .checkItemStock(66666L, 2);
+
+        //when
+        //then
+        assertThrows(ProductNotFoundException.class, () -> orderService.order(1L, order));
 
     }
 

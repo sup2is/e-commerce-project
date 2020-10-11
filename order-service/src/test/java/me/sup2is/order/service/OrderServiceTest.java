@@ -14,6 +14,7 @@ import me.sup2is.order.exception.OutOfStockException;
 import me.sup2is.order.exception.ProductNotFoundException;
 import me.sup2is.order.repository.OrderItemRepository;
 import me.sup2is.order.repository.OrderRepository;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -209,17 +210,14 @@ class OrderServiceTest {
 
         orderService.order(1L, order);
 
-        ModifyOrderItem modifyOrderItem = new ModifyOrderItem(1L, 5);
-
         //when
         String newAddress = "변경된 주소";
-        orderService.modify(1L, order.getId(), newAddress, Arrays.asList(modifyOrderItem));
+        orderService.modify(1L, order.getId(), newAddress);
 
         //then
         Order findOrder = orderService.findOne(order.getId());
 
         assertEquals(newAddress, findOrder.getAddress());
-        assertEquals(5, findOrder.getOrderItems().get(0).getCount());
 
     }
 

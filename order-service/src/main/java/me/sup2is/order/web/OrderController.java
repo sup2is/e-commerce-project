@@ -57,7 +57,7 @@ public class OrderController {
 
     @PutMapping("{orderId}")
     public ResponseEntity<JsonResult<?>> modify(@PathVariable Long orderId,
-                                                @RequestBody ModifyOrderRequestDto modifyOrderRequestDto,
+                                                @RequestBody String address,
                                                 HttpServletRequest request)
             throws OrderNotFoundException, IllegalAccessException, OutOfStockException {
 
@@ -66,8 +66,7 @@ public class OrderController {
 
         orderService.modify(member.getMemberId(),
                 orderId,
-                modifyOrderRequestDto.getAddress(),
-                ModifyOrderItemRequestDto.toModifyOrderItems(modifyOrderRequestDto.getModifyOrderItems()));
+                address);
 
         return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
     }

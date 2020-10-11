@@ -2,6 +2,7 @@ package me.sup2is.order.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -11,5 +12,4 @@ public class ModifyOrderRequestDto {
 
     private String address;
 
-    List<ModifyOrderItemRequestDto> modifyOrderItems;
 }

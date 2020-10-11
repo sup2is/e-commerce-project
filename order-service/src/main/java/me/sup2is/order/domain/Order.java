@@ -76,8 +76,17 @@ public class Order extends AuditTime{
         throw new CancelFailureException(this.getId() + " is already " + this.orderStatus);
     }
 
-    public void updateAddress(String newAddress) {
+    public void updateAddress(String newAddress) throws IllegalAccessException {
+        if(!this.orderStatus.equals(OrderStatus.ORDER)){
+            throw new IllegalAccessException("this order is already " + orderStatus.name());
+        }
         this.address = newAddress;
+    }
+
+    public void checkOwner(Long memberId) throws IllegalAccessException {
+        if(this.memberId != memberId.longValue()){
+            throw new IllegalAccessException("current user is not the owner of this order");
+        }
     }
 
     @lombok.Builder

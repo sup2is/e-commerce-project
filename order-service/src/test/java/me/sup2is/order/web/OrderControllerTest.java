@@ -183,8 +183,7 @@ class OrderControllerTest {
         String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
 
         ModifyOrderRequestDto modifyOrderRequestDto =
-                new ModifyOrderRequestDto("변경될 주소",
-                Arrays.asList(new ModifyOrderItemRequestDto(1L, 5, 0)));
+                new ModifyOrderRequestDto("변경될 주소");
 
 
         //when
@@ -201,15 +200,10 @@ class OrderControllerTest {
                             ),
                             pathParameters(parameterWithName("orderId").description("주문 번호")),
                             requestFields(
-                                    fieldWithPath("address").description("변경 될 주소"),
-                                    fieldWithPath("modifyOrderItems").description("변경할 아이템 리스트"),
-                                    fieldWithPath("modifyOrderItems[].productId").description("변경할 상품의 고유번호"),
-                                    fieldWithPath("modifyOrderItems[].count").description("변경 될 상품의 개수"),
-                                    fieldWithPath("modifyOrderItems[].discountRate").description("변경 될 상품의 할인율 (미구현)"))
+                                    fieldWithPath("address").description("변경 될 주소")
                             )
+                        )
                     );
-
-
     }
 
     @Test

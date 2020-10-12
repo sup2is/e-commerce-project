@@ -84,6 +84,11 @@ public class ProductController {
         return ResponseEntity.ok(new JsonResult<>(ProductResponseDto.createProductsResponseDto(findProducts)));
     }
 
+    @GetMapping("/{productId}/stock")
+    public ResponseEntity<JsonResult<?>> getProductStock(@PathVariable Long productId){
+        Product product = productService.findOne(productId);
+        return ResponseEntity.ok(new JsonResult<>(ProductStockDto.createProductStockDto(product)));
+    }
 
     private String getEmailByToken(String header) {
         String accessToken = extractTokenFromHeader(header);

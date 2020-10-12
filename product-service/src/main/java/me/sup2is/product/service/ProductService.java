@@ -33,7 +33,7 @@ public class ProductService {
                 .collect(Collectors.toList());
         product.classifyCategories(productCategories);
         productCategoryService.save(productCategories);
-        cachedProductStockService.insertStock(new ProductStockDto(product.getId(), product.getStock(), product.getPrice()));
+        cachedProductStockService.insertStock(ProductStockDto.createProductStockDto(product));
     }
 
     public Product findOne(Long id) {
@@ -62,6 +62,6 @@ public class ProductService {
         product.classifyCategories(productCategories);
 
         cachedProductStockService.evict(product.getId());
-        cachedProductStockService.insertStock(new ProductStockDto(product.getId(), product.getStock(), product.getPrice()));
+        cachedProductStockService.insertStock(ProductStockDto.createProductStockDto(product));
     }
 }

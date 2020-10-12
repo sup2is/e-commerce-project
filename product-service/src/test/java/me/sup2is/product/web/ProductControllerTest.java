@@ -15,6 +15,7 @@ import me.sup2is.product.service.ProductSearchService;
 import me.sup2is.product.web.dto.*;
 import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductService;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -349,6 +350,59 @@ class ProductControllerTest {
                                 fieldWithPath("data[].price").description("판매 가격"),
                                 fieldWithPath("data[].salable").description("판매 가능 여부"),
                                 fieldWithPath("data[].categories[]").description("카테고리")
+                        )
+                    )
+                );
+    }
+
+    @Test
+    public void get_product_stock() throws Exception {
+        //given
+        String email = "test@example.com";
+
+        Product product = Product.Builder.builder()
+                .brandName("리바이스")
+                .code("AA123")
+                .description("빈티지")
+                .name("청바지")
+                .salable(true)
+                .price(5000L)
+                .stock(20)
+                .build()
+                .toEntity();
+
+        FieldUtils.writeField(product, "id", 1L, true);
+
+        ProductCategory productCategory = ProductCategory.createProductCategory(product, Category.createCategory("의류"));
+        product.classifyCategories(Arrays.asList(productCategory));
+
+        Mockito.when(productService.findOne(1L))
+                .thenReturn(product);
+
+        String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
+
+        //when
+        //then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/{productId}/stock", 1L)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("get-product-stock",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("productId").description("상품 번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("result").description("API 요청 결과 SUCCESS / FAIL"),
+                                fieldWithPath("messages").description("API 요청 메시지"),
+                                fieldWithPath("error").description("API 요청 에러"),
+                                fieldWithPath("fieldErrors").description("API form validation 에러"),
+                                fieldWithPath("data").description("API 요청 데이터"),
+                                fieldWithPath("data.productId").description("상품 번호"),
+                                fieldWithPath("data.stock").description("상품 재고 수량"),
+                                fieldWithPath("data.price").description("상품 가격")
                         )
                     )
                 );

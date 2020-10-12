@@ -47,4 +47,13 @@ include::{snippets}/get-products/request-parameters.adoc[]
 include::{snippets}/get-products/http-response.adoc[]
 include::{snippets}/get-products/response-fields.adoc[]
 
+== 상품 재고 & 가격 조회
+
+include::{snippets}/get-product-stock/http-request.adoc[]
+include::{snippets}/get-product-stock/request-headers.adoc[]
+include::{snippets}/get-product-stock/path-parameters.adoc[]
+include::{snippets}/get-product-stock/http-response.adoc[]
+include::{snippets}/get-product-stock/response-fields.adoc[]
+
+
 == 카테고리 등록

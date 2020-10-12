@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,8 +28,14 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final MemberService memberService;
     private static final String TOKEN_PREFIX = "Bearer ";
-    private static final List<String> EXCLUDE_URL =
-            Arrays.asList("/auth/token", "/api/member");
+    private static final List<ExcludeURL> EXCLUDE_URL =
+            Collections.unmodifiableList(
+                    Arrays.asList(
+                            ExcludeURL.API_MEMBER,
+                            ExcludeURL.API_PRODUCT_ID,
+                            ExcludeURL.API_PRODUCT_SEARCH,
+                            ExcludeURL.AUTH_TOKEN
+                    ));
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -88,6 +95,9 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
+        return EXCLUDE_URL.stream().anyMatch(exclude ->
+                (exclude.getUrl().equalsIgnoreCase(request.getServletPath()) ||
+                    request.getServletPath().matches(exclude.getUrl())) &&
+                exclude.getMethod().toString().equals(request.getMethod()));
     }
 }

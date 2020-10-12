@@ -28,12 +28,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/member").permitAll()
-                .antMatchers("/api/product",
-                        "/api/product/stock",
-                        "/api/product/category",
-                        "/api/product/\\d+").hasRole("SELLER")
-                .antMatchers("/api/**").hasAnyRole("MEMBER", "SELLER")
+                .antMatchers(HttpMethod.GET, "/api/product/search").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/product/{\\d+}").permitAll()
                 .antMatchers("/auth/**").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/api/product").hasRole("SELLER")
+                .antMatchers(HttpMethod.POST, "/api/product/stock").hasRole("SELLER")
+                .antMatchers(HttpMethod.POST, "/api/product/category").hasRole("SELLER")
+                .antMatchers(HttpMethod.PUT, "/api/product/{\\d+}").hasRole("SELLER")
+
+                .antMatchers("/api/**").hasAnyRole("MEMBER", "SELLER")
             .and()
                 .csrf().disable()
                 .formLogin().disable()
@@ -49,3 +53,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 }
+

@@ -6,9 +6,10 @@ import me.sup2is.member.domain.Auth;
 import me.sup2is.member.domain.Member;
 import me.sup2is.member.service.MemberService;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 @Profile({"dev", "dev-integration"})
@@ -18,7 +19,7 @@ public class DataInitializer {
 
     private final MemberService memberService;
 
-    @PostConstruct
+    @EventListener({ContextRefreshedEvent.class})
     public void init() throws DuplicateMemberException {
 
         Member seller = Member.Builder.builder()

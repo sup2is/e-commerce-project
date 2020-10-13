@@ -7,6 +7,10 @@ spring:
     show-sql: on
     hibernate:
       ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
 
   datasource:
     url: jdbc:h2:~/e-commerce-local

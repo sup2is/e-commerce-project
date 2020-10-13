@@ -3,7 +3,15 @@ spring:
     host: localhost
     port: 6379
   datasource:
-    url: jdbc:h2:~/e-commerce-dev
+    url: "jdbc:h2:~/e-commerce-dev;AUTO_SERVER=TRUE"
+  jpa:
+    show-sql: on
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+
 
 eureka:
   instance:
@@ -18,3 +26,7 @@ jwt:
   secret: my-secret
 server:
   port: 8082
+
+logging:
+  level:
+    org.springframework: DEBUG

@@ -3,7 +3,6 @@ package me.sup2is.product.service;
 import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.web.dto.ProductModifyRequestDto;
-import me.sup2is.product.web.dto.ProductRequestDto;
 import me.sup2is.product.web.dto.ProductStockModifyRequestDto;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 
 @DataJpaTest
@@ -53,7 +51,7 @@ class ProductServiceTest {
         List<Category> categories = Arrays.asList(category1,
                 category2);
 
-        Mockito.when(categoryService.findAllByNames(anyList()))
+        Mockito.when(categoryService.findAllByNamesAndInsertNotExist(anyList()))
                 .thenReturn(categories);
 
 
@@ -98,7 +96,7 @@ class ProductServiceTest {
         List<Category> categories = Arrays.asList(category1,
                 category2);
 
-        Mockito.when(categoryService.findAllByNames(anyList()))
+        Mockito.when(categoryService.findAllByNamesAndInsertNotExist(anyList()))
                 .thenReturn(categories);
 
         productService.register(1L, product, categoryNames);
@@ -117,7 +115,7 @@ class ProductServiceTest {
 
 
         List<Category> modifyCategories = Arrays.asList(category1);
-        Mockito.when(categoryService.findAllByNames(anyList()))
+        Mockito.when(categoryService.findAllByNamesAndInsertNotExist(anyList()))
                 .thenReturn(modifyCategories);
 
         //when

@@ -21,12 +21,16 @@ public class CategoryService {
     }
 
     public List<Category> findAllByNames(Collection<String> categoryNames) {
+        return categoryRepository.findAllByNameIn(categoryNames);
+    }
+
+    public List<Category> findAllByNamesAndInsertNotExist(Collection<String> categoryNames) {
         for (String categoryName : categoryNames) {
             if(!categoryRepository.existsByName(categoryName))
-                add(Category.createCategory(categoryName));
+                this.add(Category.createCategory(categoryName));
         }
-        
-        return categoryRepository.findAllByNameIn(categoryNames);
+
+        return this.findAllByNames(categoryNames);
     }
 
 }

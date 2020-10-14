@@ -38,7 +38,7 @@ class CategoryServiceTest {
         categoryService.add(category2);
 
         //when
-        categoryService.findAllByNames(Arrays.asList("의류", "청바지", "pant"));
+        categoryService.findAllByNamesAndInsertNotExist(Arrays.asList("의류", "청바지", "pant"));
 
         //then
         List<Category> pant = categoryRepository.findAllByNameIn(Arrays.asList("pant"));

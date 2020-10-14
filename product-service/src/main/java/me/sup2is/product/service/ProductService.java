@@ -28,7 +28,7 @@ public class ProductService {
         product.setSellerId(sellerId);
 
         productRepository.save(product);
-        List<ProductCategory> productCategories = categoryService.findAllByNames(categoryNames).stream()
+        List<ProductCategory> productCategories = categoryService.findAllByNamesAndInsertNotExist(categoryNames).stream()
                 .map(c -> ProductCategory.createProductCategory(product, c))
                 .collect(Collectors.toList());
         product.classifyCategories(productCategories);
@@ -57,7 +57,7 @@ public class ProductService {
         }
 
         product.modify(productModifyDto);
-        List<ProductCategory> productCategories = categoryService.findAllByNames(productModifyDto.getCategories()).stream()
+        List<ProductCategory> productCategories = categoryService.findAllByNamesAndInsertNotExist(productModifyDto.getCategories()).stream()
                 .map(c -> ProductCategory.createProductCategory(product, c))
                 .collect(Collectors.toList());
         product.classifyCategories(productCategories);

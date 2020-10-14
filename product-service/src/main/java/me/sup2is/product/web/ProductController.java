@@ -3,10 +3,10 @@ package me.sup2is.product.web;
 import lombok.RequiredArgsConstructor;
 import me.sup2is.jwt.JwtTokenUtil;
 import me.sup2is.product.domain.Product;
-import me.sup2is.product.service.ProductSearchService;
-import me.sup2is.product.web.dto.ProductSpecificationQueryDto;
-import me.sup2is.product.domain.dto.*;
+import me.sup2is.product.domain.dto.MemberDto;
+import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.service.MemberService;
+import me.sup2is.product.service.ProductSearchService;
 import me.sup2is.product.service.ProductService;
 import me.sup2is.product.web.dto.*;
 import me.sup2is.web.JsonResult;
@@ -42,8 +42,8 @@ public class ProductController {
         String email = getEmailByToken(request.getHeader(HttpHeaders.AUTHORIZATION));
         MemberDto member = memberService.getMember(email);
 
-        productService.register(member.getMemberId(), productRequestDto.toEntity(), productRequestDto.getCategories());
-        return ResponseEntity.ok(new JsonResult<>(JsonResult.Result.SUCCESS));
+        Product product = productService.register(member.getMemberId(), productRequestDto.toEntity(), productRequestDto.getCategories());
+        return ResponseEntity.ok(new JsonResult<>(new ProductResponseDto(product)));
     }
 
     @PutMapping("/stock")

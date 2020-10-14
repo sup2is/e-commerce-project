@@ -24,7 +24,7 @@ public class ProductService {
     private final ProductCategoryService productCategoryService;
     private final CachedProductStockService cachedProductStockService;
 
-    public void register(Long sellerId, Product product, List<String> categoryNames) {
+    public Product register(Long sellerId, Product product, List<String> categoryNames) {
         product.setSellerId(sellerId);
 
         productRepository.save(product);
@@ -34,6 +34,7 @@ public class ProductService {
         product.classifyCategories(productCategories);
         productCategoryService.save(productCategories);
         cachedProductStockService.insertStock(ProductStockDto.createProductStockDto(product));
+        return product;
     }
 
     public Product findOne(Long id) {

@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import me.sup2is.product.domain.Product;
-import me.sup2is.product.domain.ProductCategory;
 
-import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +15,10 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 @Builder
 public class ProductResponseDto {
+
+    private Long id;
+
+    private Long sellerId;
 
     private String name;
 
@@ -33,7 +36,15 @@ public class ProductResponseDto {
 
     private boolean salable;
 
+    private LocalDateTime createAt;
+
+    private LocalDateTime updatedAt;
+
     public ProductResponseDto(Product findProduct) {
+        this.id = findProduct.getId();
+        this.sellerId = findProduct.getSellerId();
+        this.createAt = findProduct.getCreateAt();
+        this.updatedAt = findProduct.getUpdatedAt();
         this.name = findProduct.getName();
         this.code = findProduct.getCode();
         this.brandName = findProduct.getBrandName();

@@ -10,13 +10,12 @@ import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.ProductCategory;
 import me.sup2is.product.domain.dto.MemberDto;
+import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductSearchKey;
 import me.sup2is.product.service.ProductSearchService;
-import me.sup2is.product.web.dto.*;
-import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductService;
+import me.sup2is.product.web.dto.*;
 import org.apache.commons.lang.reflect.FieldUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +29,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
@@ -44,8 +40,6 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -74,6 +68,10 @@ class ProductControllerTest {
 
     @Test
     public void register() throws Exception {
+
+        Category category1 = Category.createCategory("의류");
+        Category category2 = Category.createCategory("청바지");
+
         //given
         ProductRequestDto productRequestDto = ProductRequestDto.builder()
                 .brandName("리바이스")
@@ -86,15 +84,25 @@ class ProductControllerTest {
                 .stock(1000)
                 .build();
 
-        doAnswer(i -> null)
-                .when(productService)
-                .register(1L, productRequestDto.toEntity(), productRequestDto.getCategories());
+        Product product = productRequestDto.toEntity();
+
+        FieldUtils.writeField(product, "createAt", LocalDateTime.now(), true);
+        FieldUtils.writeField(product, "updatedAt", LocalDateTime.now(), true);
+        FieldUtils.writeField(product, "id", 1L, true);
+        FieldUtils.writeField(product, "sellerId", 1L, true);
+        FieldUtils.writeField(product, "categories",
+                Arrays.asList(ProductCategory.createProductCategory(product, category1),
+                        ProductCategory.createProductCategory(product, category2)), true);
 
         String email = "test@example.com";
         MemberDto memberDto = getMemberDto(email);
 
         Mockito.when(memberService.getMember(email))
                 .thenReturn(memberDto);
+
+        Mockito.when(productService.register(anyLong(), any(Product.class), anyList()))
+                .thenReturn(product);
+
 
         String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);
 
@@ -119,6 +127,26 @@ class ProductControllerTest {
                                 fieldWithPath("price").description("판매 가격"),
                                 fieldWithPath("salable").description("판매 가능 여부"),
                                 fieldWithPath("categories[]").description("카테고리")
+                        ),
+                        responseFields(
+                                fieldWithPath("result").description("API 요청 결과 SUCCESS / FAIL"),
+                                fieldWithPath("messages").description("API 요청 메시지"),
+                                fieldWithPath("error").description("API 요청 에러"),
+                                fieldWithPath("fieldErrors").description("API form validation 에러"),
+                                fieldWithPath("data").description("API 요청 데이터"),
+                                fieldWithPath("data.id").description("상품 고유 번호"),
+                                fieldWithPath("data.sellerId").description("판매자 고유 번호"),
+                                fieldWithPath("data.name").description("상품명"),
+                                fieldWithPath("data.code").description("상품 고유 코드"),
+                                fieldWithPath("data.brandName").description("브랜드 명"),
+                                fieldWithPath("data.description").description("상품 설명"),
+                                fieldWithPath("data.stock").description("상품 재고"),
+                                fieldWithPath("data.price").description("판매 가격"),
+                                fieldWithPath("data.salable").description("판매 가능 여부"),
+                                fieldWithPath("data.categories[]").description("카테고리"),
+                                fieldWithPath("data.createAt").description("등록시간"),
+                                fieldWithPath("data.updatedAt").description("수정시간")
+
                         )
                     )
                 );
@@ -206,6 +234,13 @@ class ProductControllerTest {
                                 fieldWithPath("price").description("수정될 판매 가격"),
                                 fieldWithPath("salable").description("수정될 판매 가능 여부"),
                                 fieldWithPath("categories[]").description("수정될 카테고리")
+                        ),
+                        responseFields(
+                                fieldWithPath("result").description("API 요청 결과 SUCCESS / FAIL"),
+                                fieldWithPath("messages").description("API 요청 메시지"),
+                                fieldWithPath("error").description("API 요청 에러"),
+                                fieldWithPath("fieldErrors").description("API form validation 에러"),
+                                fieldWithPath("data").description("API 요청 데이터")
                         )
                     )
                 );
@@ -227,6 +262,12 @@ class ProductControllerTest {
                 .stock(20)
                 .build()
                 .toEntity();
+
+
+        FieldUtils.writeField(product, "createAt", LocalDateTime.now(), true);
+        FieldUtils.writeField(product, "updatedAt", LocalDateTime.now(), true);
+        FieldUtils.writeField(product, "id", 1L, true);
+        FieldUtils.writeField(product, "sellerId", 1L, true);
 
         ProductCategory productCategory = ProductCategory.createProductCategory(product, Category.createCategory("의류"));
         product.classifyCategories(Arrays.asList(productCategory));
@@ -255,6 +296,8 @@ class ProductControllerTest {
                                 fieldWithPath("error").description("API 요청 에러"),
                                 fieldWithPath("fieldErrors").description("API form validation 에러"),
                                 fieldWithPath("data").description("API 요청 데이터"),
+                                fieldWithPath("data.id").description("상품 고유 번호"),
+                                fieldWithPath("data.sellerId").description("판매자 고유 번호"),
                                 fieldWithPath("data.name").description("상품명"),
                                 fieldWithPath("data.code").description("상품 고유 코드"),
                                 fieldWithPath("data.brandName").description("브랜드 명"),
@@ -262,7 +305,9 @@ class ProductControllerTest {
                                 fieldWithPath("data.stock").description("상품 재고"),
                                 fieldWithPath("data.price").description("판매 가격"),
                                 fieldWithPath("data.salable").description("판매 가능 여부"),
-                                fieldWithPath("data.categories[]").description("카테고리")
+                                fieldWithPath("data.categories[]").description("카테고리"),
+                                fieldWithPath("data.createAt").description("등록시간"),
+                                fieldWithPath("data.updatedAt").description("수정시간")
                         )
                     )
                 );
@@ -287,6 +332,11 @@ class ProductControllerTest {
         ProductCategory productCategory = ProductCategory.createProductCategory(product, Category.createCategory("빈티지"));
         product.classifyCategories(Arrays.asList(productCategory));
 
+        FieldUtils.writeField(product, "createAt", LocalDateTime.now(), true);
+        FieldUtils.writeField(product, "updatedAt", LocalDateTime.now(), true);
+        FieldUtils.writeField(product, "id", 1L, true);
+        FieldUtils.writeField(product, "sellerId", 1L, true);
+
         Mockito.when(productService.findOne(1L))
                 .thenReturn(product);
 
@@ -308,11 +358,6 @@ class ProductControllerTest {
         Map<String, Object> map =
                 objectMapper.convertValue(productSpecificationQueryDto, new TypeReference<Map<String, Object>>() {});
 
-//        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<>();
-//        map.entrySet().forEach(e -> linkedMultiValueMap.add(e.getKey(), e.getValue()));
-
-//        String s = toQueryString(map);
-
         String s = "name=바지&code=AA123&brandName=캘빈클라인&minPrice=5000&maxPrice=100000&categories=빈티지,슬림핏";
 
         //when
@@ -320,8 +365,7 @@ class ProductControllerTest {
         String urlTemplate = "/search?" + s;
         System.out.println(urlTemplate);
         mockMvc.perform(RestDocumentationRequestBuilders.get(urlTemplate)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("get-products",
@@ -342,6 +386,8 @@ class ProductControllerTest {
                                 fieldWithPath("error").description("API 요청 에러"),
                                 fieldWithPath("fieldErrors").description("API form validation 에러"),
                                 fieldWithPath("data[]").description("API 요청 데이터"),
+                                fieldWithPath("data[].id").description("상품 고유 번호"),
+                                fieldWithPath("data[].sellerId").description("판매자 고유 번호"),
                                 fieldWithPath("data[].name").description("상품명"),
                                 fieldWithPath("data[].code").description("상품 고유 코드"),
                                 fieldWithPath("data[].brandName").description("브랜드 명"),
@@ -349,7 +395,9 @@ class ProductControllerTest {
                                 fieldWithPath("data[].stock").description("상품 재고"),
                                 fieldWithPath("data[].price").description("판매 가격"),
                                 fieldWithPath("data[].salable").description("판매 가능 여부"),
-                                fieldWithPath("data[].categories[]").description("카테고리")
+                                fieldWithPath("data[].categories[]").description("카테고리"),
+                                fieldWithPath("data[].createAt").description("등록시간"),
+                                fieldWithPath("data[].updatedAt").description("수정시간")
                         )
                     )
                 );
@@ -406,35 +454,6 @@ class ProductControllerTest {
                         )
                     )
                 );
-    }
-
-    private String toQueryString(Map<String, Object> map) {
-        StringBuilder qs = new StringBuilder();
-        for (String key : map.keySet()){
-
-            if (key.equals("categories")) {
-                List<String> categories = (List<String>) map.get(key);
-                qs.append("categories=");
-                for (int i = 0; i < categories.size(); i++) {
-                    qs.append(categories.get(i) + ",");
-                }
-
-                qs.deleteCharAt(qs.length() - 1);
-
-            }else {
-                qs.append(key);
-                qs.append("=");
-                qs.append(map.get(key));
-                qs.append("&");
-            }
-
-        }
-
-        // delete last '&'
-        if (qs.length() != 0) {
-            qs.deleteCharAt(qs.length() - 1);
-        }
-        return qs.toString();
     }
 
     private MemberDto getMemberDto(String email) {

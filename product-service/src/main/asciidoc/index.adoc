@@ -4,7 +4,7 @@
 :toclevels: 4
 :toc-title: My Content
 
-※ Spring Cloud 환경에서 Order Service에 대한 모든 요청은 JWT 토큰 必
+※ Spring Cloud 환경에서 모든 요청은 JWT 토큰 必
 
 
 == 상품 등록
@@ -12,6 +12,8 @@
 include::{snippets}/create-product/http-request.adoc[]
 include::{snippets}/create-product/request-headers.adoc[]
 include::{snippets}/create-product/request-fields.adoc[]
+include::{snippets}/create-product/http-response.adoc[]
+include::{snippets}/create-product/response-fields.adoc[]
 
 == 상품 제거
 === 상품제거는 상품 수정에서 salable 값으로 조정
@@ -22,12 +24,16 @@ include::{snippets}/modify-product/http-request.adoc[]
 include::{snippets}/modify-product/request-headers.adoc[]
 include::{snippets}/modify-product/path-parameters.adoc[]
 include::{snippets}/modify-product/request-fields.adoc[]
+include::{snippets}/modify-product/http-response.adoc[]
+include::{snippets}/modify-product/response-fields.adoc[]
 
 == 상품 수정(재고 수정)
 
 include::{snippets}/modify-product-stock/http-request.adoc[]
 include::{snippets}/modify-product-stock/request-headers.adoc[]
 include::{snippets}/modify-product-stock/request-fields.adoc[]
+include::{snippets}/modify-product/http-response.adoc[]
+include::{snippets}/modify-product/response-fields.adoc[]
 
 == 상품 조회 (1개)
 

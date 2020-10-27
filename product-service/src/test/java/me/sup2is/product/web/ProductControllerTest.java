@@ -12,7 +12,6 @@ import me.sup2is.product.domain.ProductCategory;
 import me.sup2is.product.domain.dto.MemberDto;
 import me.sup2is.product.service.MemberService;
 import me.sup2is.product.service.ProductSearchKey;
-import me.sup2is.product.service.ProductSearchService;
 import me.sup2is.product.service.ProductService;
 import me.sup2is.product.web.dto.*;
 import org.apache.commons.lang.reflect.FieldUtils;
@@ -62,9 +61,6 @@ class ProductControllerTest {
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
-
-    @MockBean
-    ProductSearchService productSearchService;
 
     @Test
     public void register() throws Exception {
@@ -350,7 +346,7 @@ class ProductControllerTest {
 
         Map<ProductSearchKey, Object> queryMap = productSpecificationQueryDto.createQueryMap();
 
-        Mockito.when(productSearchService.findAllByQuery(productPageRequest, queryMap))
+        Mockito.when(productService.findAllByQuery(productPageRequest, queryMap))
                 .thenReturn(Arrays.asList(product));
 
         String token = jwtTokenUtil.generateToken(email, JwtTokenType.AUTH);

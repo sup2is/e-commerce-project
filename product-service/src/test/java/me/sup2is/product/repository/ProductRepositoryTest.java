@@ -1,9 +1,11 @@
 package me.sup2is.product.repository;
 
+import me.sup2is.product.config.QueryDSLConfiguration;
 import me.sup2is.product.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.EntityManager;
@@ -12,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @EnableJpaAuditing
+@Import(QueryDSLConfiguration.class)
 class ProductRepositoryTest {
 
     @Autowired

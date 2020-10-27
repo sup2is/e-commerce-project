@@ -1,5 +1,6 @@
 package me.sup2is.product.service;
 
+import me.sup2is.product.config.QueryDSLConfiguration;
 import me.sup2is.product.domain.Category;
 import me.sup2is.product.repository.CategoryRepository;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-@Import(CategoryService.class)
+@Import({CategoryService.class, QueryDSLConfiguration.class})
 @EnableJpaAuditing
 class CategoryServiceTest {
 

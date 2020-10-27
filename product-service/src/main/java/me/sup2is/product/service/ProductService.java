@@ -8,10 +8,12 @@ import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.exception.ProductNotFoundException;
 import me.sup2is.product.repository.ProductRepository;
 import me.sup2is.product.web.dto.ProductStockModifyRequestDto;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,5 +66,9 @@ public class ProductService {
 
         cachedProductStockService.evict(product.getId());
         cachedProductStockService.insertStock(ProductStockDto.createProductStockDto(product));
+    }
+
+    public List<Product> findAllByQuery(PageRequest pageRequest, Map<ProductSearchKey, Object> query) {
+        return productRepository.searchAll(pageRequest, query);
     }
 }

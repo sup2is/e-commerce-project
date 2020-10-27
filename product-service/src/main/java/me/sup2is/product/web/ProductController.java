@@ -6,7 +6,6 @@ import me.sup2is.product.domain.Product;
 import me.sup2is.product.domain.dto.MemberDto;
 import me.sup2is.product.domain.dto.ProductStockDto;
 import me.sup2is.product.service.MemberService;
-import me.sup2is.product.service.ProductSearchService;
 import me.sup2is.product.service.ProductService;
 import me.sup2is.product.web.dto.*;
 import me.sup2is.web.JsonResult;
@@ -30,7 +29,6 @@ public class ProductController {
     private final ProductService productService;
     private final MemberService memberService;
     private final JwtTokenUtil jwtTokenUtil;
-    private final ProductSearchService productSearchService;
 
     @PostMapping("/")
     public ResponseEntity<JsonResult<?>> register(@RequestBody @Valid ProductRequestDto productRequestDto,
@@ -80,7 +78,7 @@ public class ProductController {
                                                      ProductSpecificationQueryDto productSpecificationQuery){
 
         PageRequest pageRequest = ProductPageRequestDto.createProductPageRequest(pageNo, pageSize);
-        List<Product> findProducts = productSearchService.findAllByQuery(pageRequest, productSpecificationQuery.createQueryMap());
+        List<Product> findProducts = productService.findAllByQuery(pageRequest, productSpecificationQuery.createQueryMap());
         return ResponseEntity.ok(new JsonResult<>(ProductResponseDto.createProductsResponseDto(findProducts)));
     }
 

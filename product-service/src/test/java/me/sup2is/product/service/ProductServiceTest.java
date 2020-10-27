@@ -1,5 +1,6 @@
 package me.sup2is.product.service;
 
+import me.sup2is.product.config.QueryDSLConfiguration;
 import me.sup2is.product.domain.Category;
 import me.sup2is.product.domain.Product;
 import me.sup2is.product.web.dto.ProductModifyRequestDto;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 
 @DataJpaTest
-@Import({ProductService.class, ProductCategoryService.class, CachedProductStockService.class})
+@Import({ProductService.class, ProductCategoryService.class, CachedProductStockService.class, QueryDSLConfiguration.class})
 @EnableJpaAuditing
 class ProductServiceTest {
 
